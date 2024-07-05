@@ -2,7 +2,12 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/jefgodesky/rnrapi/initializers"
 )
+
+func init() {
+	initializers.LoadEnv()
+}
 
 func main() {
 	r := gin.Default()
