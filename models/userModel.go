@@ -1,6 +1,8 @@
 package models
 
 import (
+	"crypto/rand"
+	"encoding/base64"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
@@ -8,11 +10,19 @@ import (
 type User struct {
 	gorm.Model
 	Username string `gorm:"uniqueIndex" json:"username"`
-	Password string `json:"password"`
+	APIKey   string `json:"apikey"`
 	Active   bool   `json:"active"`
 }
 
-func HashPassword(password string) (string, error) {
-	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+func GenerateAPIKey() (string, error) {
+	bytes := make([]byte, 32)
+	if _, err := rand.Read(bytes); err != nil {
+		return "", err
+	}
+	return base64.URLEncoding.EncodeToString(bytes), nil
+}
+
+func HashAPIKey(apiKey string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(apiKey), bcrypt.DefaultCost)
 	return string(bytes), err
 }

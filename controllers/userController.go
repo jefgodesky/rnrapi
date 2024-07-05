@@ -13,7 +13,6 @@ import (
 func UserCreate(c *gin.Context) {
 	var body struct {
 		Username string
-		Password string
 	}
 
 	if err := c.Bind(&body); err != nil {
@@ -21,13 +20,19 @@ func UserCreate(c *gin.Context) {
 		return
 	}
 
-	hash, err := models.HashPassword(body.Password)
+	key, err := models.GenerateAPIKey()
 	if err != nil {
-		c.JSON(400, gin.H{"error": "Failed to hash password"})
+		c.JSON(400, gin.H{"error": "Failed to generate API key"})
 		return
 	}
 
-	user := models.User{Username: body.Username, Password: hash, Active: true}
+	hash, err := models.HashAPIKey(key)
+	if err != nil {
+		c.JSON(400, gin.H{"error": "Failed to hash API key"})
+		return
+	}
+
+	user := models.User{Username: body.Username, APIKey: hash, Active: true}
 	result := initializers.DB.Create(&user)
 	if result.Error != nil {
 		username := "duplicate key value violates unique constraint"
@@ -41,7 +46,7 @@ func UserCreate(c *gin.Context) {
 
 	location := fmt.Sprintf("/v1/users/%s", user.Username)
 	c.Header("Location", location)
-	c.Status(201)
+	c.JSON(200, serializers.SerializeUser(user, &key))
 }
 
 func UserIndex(c *gin.Context) {
@@ -66,5 +71,5 @@ func UserRetrieve(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, serializers.SerializeUser(user))
+	c.JSON(200, serializers.SerializeUser(user, nil))
 }
