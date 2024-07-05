@@ -6,6 +6,7 @@ import (
 	"github.com/jefgodesky/rnrapi/initializers"
 	"github.com/jefgodesky/rnrapi/models"
 	"github.com/jefgodesky/rnrapi/serializers"
+	"gorm.io/gorm"
 	"strings"
 )
 
@@ -49,4 +50,21 @@ func UserIndex(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"users": serializers.SerializeUsers(users),
 	})
+}
+
+func UserRetrieve(c *gin.Context) {
+	username := c.Param("username")
+	var user models.User
+	result := initializers.DB.Where("username = ?", username).First(&user)
+
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			c.JSON(404, gin.H{"error": fmt.Sprintf("User %s not found", username)})
+			return
+		}
+		c.JSON(500, gin.H{"error": "Failed to retrieve user"})
+		return
+	}
+
+	c.JSON(200, serializers.SerializeUser(user))
 }
