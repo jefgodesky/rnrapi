@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jefgodesky/rnrapi/initializers"
 	"github.com/jefgodesky/rnrapi/models"
+	"strings"
 )
 
 func UserCreate(c *gin.Context) {
@@ -13,20 +14,26 @@ func UserCreate(c *gin.Context) {
 		Password string
 	}
 
-	c.Bind(&body)
+	if err := c.Bind(&body); err != nil {
+		c.JSON(400, gin.H{"error": "Invalid input"})
+		return
+	}
 
 	hash, err := models.HashPassword(body.Password)
-
 	if err != nil {
-		c.Status(400)
+		c.JSON(400, gin.H{"error": "Failed to hash password"})
 		return
 	}
 
 	user := models.User{Username: body.Username, Password: hash, Active: true}
 	result := initializers.DB.Create(&user)
-
 	if result.Error != nil {
-		c.Status(400)
+		username := "duplicate key value violates unique constraint"
+		if strings.Contains(result.Error.Error(), username) {
+			c.JSON(409, gin.H{"error": fmt.Sprintf("Username %s already exists", body.Username)})
+		} else {
+			c.JSON(400, gin.H{"error": "Failed to create user"})
+		}
 		return
 	}
 
