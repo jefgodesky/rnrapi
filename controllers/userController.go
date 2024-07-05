@@ -14,7 +14,14 @@ func UserCreate(c *gin.Context) {
 
 	c.Bind(&body)
 
-	user := models.User{Username: body.Username, Password: body.Password, Active: true}
+	hash, err := models.HashPassword(body.Password)
+
+	if err != nil {
+		c.Status(400)
+		return
+	}
+
+	user := models.User{Username: body.Username, Password: hash, Active: true}
 	result := initializers.DB.Create(&user)
 
 	if result.Error != nil {
