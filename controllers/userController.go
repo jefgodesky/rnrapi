@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/jefgodesky/rnrapi/initializers"
 	"github.com/jefgodesky/rnrapi/models"
@@ -29,5 +30,7 @@ func UserCreate(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, user)
+	location := fmt.Sprintf("/v1/users/%s", user.Username)
+	c.Header("Location", location)
+	c.Status(201)
 }
