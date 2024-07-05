@@ -1,7 +1,7 @@
 package initializers
 
 import (
-	"fmt"
+	"github.com/jefgodesky/rnrapi/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
@@ -18,10 +18,13 @@ func ConnectToDB() {
 		" dbname=" + os.Getenv("POSTGRES_DB") +
 		" port=" + os.Getenv("POSTGRES_PORT") +
 		" sslmode=disable"
-	fmt.Println(dsn)
 	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {
 		log.Fatal("Failed to connect to database")
 	}
+}
+
+func MigrateDB() {
+	DB.AutoMigrate(&models.User{})
 }
