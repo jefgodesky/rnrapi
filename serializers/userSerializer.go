@@ -13,3 +13,12 @@ func SerializeUser(user models.User) SerializedUser {
 		Active:   user.Active,
 	}
 }
+
+func SerializeUsers(users []models.User) []SerializedUser {
+	serializedUsers := make([]SerializedUser, 0)
+	for _, user := range users {
+		serializedUser := SerializeUser(user)
+		serializedUsers = append(serializedUsers, serializedUser)
+	}
+	return serializedUsers
+}

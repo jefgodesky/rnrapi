@@ -18,6 +18,7 @@ func main() {
 	v1 := r.Group(apiVersion)
 	{
 		v1.POST("/users", controllers.UserCreate)
+		v1.GET("/users", controllers.UserIndex)
 	}
 	r.Run()
 }

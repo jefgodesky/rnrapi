@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jefgodesky/rnrapi/initializers"
 	"github.com/jefgodesky/rnrapi/models"
+	"github.com/jefgodesky/rnrapi/serializers"
 	"strings"
 )
 
@@ -40,4 +41,12 @@ func UserCreate(c *gin.Context) {
 	location := fmt.Sprintf("/v1/users/%s", user.Username)
 	c.Header("Location", location)
 	c.Status(201)
+}
+
+func UserIndex(c *gin.Context) {
+	var users []models.User
+	initializers.DB.Where("active = ?", true).Find(&users)
+	c.JSON(200, gin.H{
+		"users": serializers.SerializeUsers(users),
+	})
 }
