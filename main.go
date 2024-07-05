@@ -6,6 +6,8 @@ import (
 	"github.com/jefgodesky/rnrapi/initializers"
 )
 
+const apiVersion = "/v1"
+
 func init() {
 	initializers.ConnectToDB()
 	initializers.MigrateDB()
@@ -13,6 +15,9 @@ func init() {
 
 func main() {
 	r := gin.Default()
-	r.POST("/users", controllers.UserCreate)
+	v1 := r.Group(apiVersion)
+	{
+		v1.POST("/users", controllers.UserCreate)
+	}
 	r.Run()
 }
