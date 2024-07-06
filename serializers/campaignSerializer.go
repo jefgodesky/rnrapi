@@ -3,12 +3,20 @@ package serializers
 import "github.com/jefgodesky/rnrapi/models"
 
 type SerializedCampaign struct {
-	Name        string          `json:"name"`
-	Slug        string          `json:"slug"`
-	Description string          `json:"description"`
-	GMs         []string        `json:"gms"`
-	Public      bool            `json:"public"`
-	World       SerializedWorld `json:"world"`
+	Name        string                       `json:"name"`
+	Slug        string                       `json:"slug"`
+	Description string                       `json:"description"`
+	GMs         []string                     `json:"gms"`
+	Public      bool                         `json:"public"`
+	World       SerializedWorldSansCampaigns `json:"world"`
+}
+
+type SerializedCampaignSansWorld struct {
+	Name        string   `json:"name"`
+	Slug        string   `json:"slug"`
+	Description string   `json:"description"`
+	GMs         []string `json:"gms"`
+	Public      bool     `json:"public"`
 }
 
 func SerializeCampaign(campaign models.Campaign) SerializedCampaign {
@@ -17,7 +25,7 @@ func SerializeCampaign(campaign models.Campaign) SerializedCampaign {
 		gms = append(gms, gm.Username)
 	}
 
-	world := SerializeWorld(campaign.World)
+	world := SerializeWorldSansCampaigns(campaign.World)
 
 	return SerializedCampaign{
 		Name:        campaign.Name,
@@ -26,6 +34,17 @@ func SerializeCampaign(campaign models.Campaign) SerializedCampaign {
 		GMs:         gms,
 		Public:      world.Public,
 		World:       world,
+	}
+}
+
+func SerializeCampaignSansWorld(campaign models.Campaign) SerializedCampaignSansWorld {
+	serialized := SerializeCampaign(campaign)
+	return SerializedCampaignSansWorld{
+		Name:        serialized.Name,
+		Slug:        serialized.Slug,
+		Description: serialized.Description,
+		GMs:         serialized.GMs,
+		Public:      serialized.Public,
 	}
 }
 
