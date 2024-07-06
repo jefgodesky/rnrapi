@@ -27,6 +27,8 @@ func main() {
 		{
 			authRequired.PUT("/users", controllers.UserUpdate)
 			authRequired.PUT("/key", controllers.KeyUpdate)
+
+			authRequired.POST("/worlds", controllers.WorldCreate)
 		}
 	}
 	r.Run()
