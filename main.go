@@ -30,6 +30,7 @@ func main() {
 
 			authRequired.POST("/worlds", controllers.WorldCreate)
 			authRequired.PUT("/worlds/:slug", controllers.WorldUpdate)
+			authRequired.DELETE("/worlds/:slug", controllers.WorldDestroy)
 		}
 
 		authOptional := v.Group("/")

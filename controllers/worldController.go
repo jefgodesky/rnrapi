@@ -54,12 +54,8 @@ func WorldRetrieve(c *gin.Context) {
 }
 
 func WorldUpdate(c *gin.Context) {
-	world := helpers.GetWorldFromSlug(c)
-	user := helpers.GetUserFromContext(c, false)
-	isCreator := helpers.IsWorldCreator(world, user)
-
-	if !isCreator {
-		c.JSON(403, gin.H{"error": "Forbidden"})
+	world := helpers.WorldCreatorOnly(c)
+	if world == nil {
 		return
 	}
 
@@ -71,6 +67,20 @@ func WorldUpdate(c *gin.Context) {
 
 	if err := initializers.DB.Save(world).Error; err != nil {
 		c.JSON(500, gin.H{"Error": "Failed to update world"})
+		return
+	}
+
+	c.JSON(200, serializers.SerializeWorld(*world))
+}
+
+func WorldDestroy(c *gin.Context) {
+	world := helpers.WorldCreatorOnly(c)
+	if world == nil {
+		return
+	}
+
+	if err := initializers.DB.Delete(&world).Error; err != nil {
+		c.JSON(500, gin.H{"Error": "Failed to destroy world"})
 		return
 	}
 

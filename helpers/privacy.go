@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"github.com/gin-gonic/gin"
 	"github.com/jefgodesky/rnrapi/models"
 )
 
@@ -28,4 +29,24 @@ func HasWorldAccess(world *models.World, user *models.User) bool {
 	}
 
 	return false
+}
+
+func WorldCreatorOnly(c *gin.Context) *models.World {
+	world := GetWorldFromSlug(c)
+	if world == nil {
+		return nil
+	}
+
+	user := GetUserFromContext(c, true)
+	if user == nil {
+		return nil
+	}
+
+	isCreator := IsWorldCreator(world, user)
+	if !isCreator {
+		c.JSON(403, gin.H{"error": "Forbidden"})
+		return nil
+	}
+
+	return world
 }
