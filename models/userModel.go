@@ -26,3 +26,7 @@ func HashAPIKey(apiKey string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(apiKey), bcrypt.DefaultCost)
 	return string(bytes), err
 }
+
+func CheckAPIKey(providedKey, storedHash string) error {
+	return bcrypt.CompareHashAndPassword([]byte(storedHash), []byte(providedKey))
+}

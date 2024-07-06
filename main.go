@@ -20,6 +20,7 @@ func main() {
 		v1.POST("/users", controllers.UserCreate)
 		v1.GET("/users", controllers.UserIndex)
 		v1.GET("/users/:username", controllers.UserRetrieve)
+		v1.PUT("/users/:username", controllers.UserUpdate)
 	}
 	r.Run()
 }

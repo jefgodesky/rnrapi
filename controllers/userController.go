@@ -10,6 +10,23 @@ import (
 	"strings"
 )
 
+func getUserByUsername(c *gin.Context) (*models.User, bool) {
+	username := c.Param("username")
+	var user models.User
+	result := initializers.DB.Where("username = ?", username).First(&user)
+
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			c.JSON(404, gin.H{"error": fmt.Sprintf("User %s not found", username)})
+			return nil, false
+		}
+		c.JSON(500, gin.H{"error": "Failed to retrieve user"})
+		return nil, false
+	}
+
+	return &user, true
+}
+
 func UserCreate(c *gin.Context) {
 	var body struct {
 		Username string
@@ -58,18 +75,44 @@ func UserIndex(c *gin.Context) {
 }
 
 func UserRetrieve(c *gin.Context) {
-	username := c.Param("username")
-	var user models.User
-	result := initializers.DB.Where("username = ?", username).First(&user)
+	user, ok := getUserByUsername(c)
+	if !ok {
+		return
+	}
+	c.JSON(200, serializers.SerializeUser(*user, nil))
+}
 
-	if result.Error != nil {
-		if result.Error == gorm.ErrRecordNotFound {
-			c.JSON(404, gin.H{"error": fmt.Sprintf("User %s not found", username)})
-			return
-		}
-		c.JSON(500, gin.H{"error": "Failed to retrieve user"})
+func UserUpdate(c *gin.Context) {
+	var body struct {
+		Username string `json:"username"`
+	}
+	if err := c.Bind(&body); err != nil {
+		c.JSON(400, gin.H{"error": "Invalid input"})
 		return
 	}
 
-	c.JSON(200, serializers.SerializeUser(user, nil))
+	apiKey := c.GetHeader("Authorization")
+	if apiKey == "" || !strings.HasPrefix(apiKey, "Bearer ") {
+		c.JSON(401, gin.H{"error": "API key required"})
+		return
+	}
+	apiKey = strings.TrimPrefix(apiKey, "Bearer ")
+
+	user, ok := getUserByUsername(c)
+	if !ok {
+		return
+	}
+
+	if err := models.CheckAPIKey(apiKey, user.APIKey); err != nil {
+		c.JSON(403, gin.H{"error": "Forbidden"})
+		return
+	}
+
+	user.Username = body.Username
+	if err := initializers.DB.Save(user).Error; err != nil {
+		c.JSON(500, gin.H{"Error": "Failed to update user"})
+		return
+	}
+
+	c.JSON(200, serializers.SerializeUser(*user, nil))
 }
