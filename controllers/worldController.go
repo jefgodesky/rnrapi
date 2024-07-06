@@ -81,3 +81,16 @@ func WorldIndex(c *gin.Context) {
 		"worlds": serializers.SerializeWorlds(worlds),
 	})
 }
+
+func WorldRetrieve(c *gin.Context) {
+	world := helpers.GetWorldFromSlug(c)
+	user := helpers.GetUserFromContext(c, false)
+	allowed := helpers.HasWorldAccess(world, user)
+
+	if !allowed {
+		c.JSON(403, gin.H{"error": "Forbidden"})
+		return
+	}
+
+	c.JSON(200, serializers.SerializeWorld(*world))
+}

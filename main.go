@@ -35,6 +35,7 @@ func main() {
 		authOptional.Use(middlewares.AuthOptional())
 		{
 			authOptional.GET("/worlds", controllers.WorldIndex)
+			authOptional.GET("/worlds/:slug", controllers.WorldRetrieve)
 		}
 	}
 	r.Run()
