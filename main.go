@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jefgodesky/rnrapi/controllers"
 	"github.com/jefgodesky/rnrapi/initializers"
+	"github.com/jefgodesky/rnrapi/middlewares"
 )
 
 const apiVersion = "/v1"
@@ -15,12 +16,17 @@ func init() {
 
 func main() {
 	r := gin.Default()
-	v1 := r.Group(apiVersion)
+	v := r.Group(apiVersion)
 	{
-		v1.POST("/users", controllers.UserCreate)
-		v1.GET("/users", controllers.UserIndex)
-		v1.GET("/users/:username", controllers.UserRetrieve)
-		v1.PUT("/users/:username", controllers.UserUpdate)
+		v.POST("/users", controllers.UserCreate)
+		v.GET("/users", controllers.UserIndex)
+		v.GET("/users/:username", controllers.UserRetrieve)
+
+		authRequired := v.Group("/")
+		authRequired.Use(middlewares.APIKeyAuthMiddleware())
+		{
+			authRequired.PUT("/users", controllers.UserUpdate)
+		}
 	}
 	r.Run()
 }

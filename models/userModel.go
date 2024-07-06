@@ -3,6 +3,7 @@ package models
 import (
 	"crypto/rand"
 	"encoding/base64"
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
@@ -10,16 +11,19 @@ import (
 type User struct {
 	gorm.Model
 	Username string `gorm:"uniqueIndex" json:"username"`
-	APIKey   string `json:"apikey"`
+	Token    string `gorm:"uniqueIndex" json:"-"`
+	Secret   string `json:"-"`
 	Active   bool   `json:"active"`
 }
 
-func GenerateAPIKey() (string, error) {
+func GenerateAPIKey() (string, string, error) {
 	bytes := make([]byte, 32)
 	if _, err := rand.Read(bytes); err != nil {
-		return "", err
+		return "", "", err
 	}
-	return base64.URLEncoding.EncodeToString(bytes), nil
+	secret := base64.StdEncoding.EncodeToString(bytes)
+	token := uuid.New().String()
+	return token, secret, nil
 }
 
 func HashAPIKey(apiKey string) (string, error) {
