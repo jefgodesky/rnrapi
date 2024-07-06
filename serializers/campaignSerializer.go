@@ -28,3 +28,11 @@ func SerializeCampaign(campaign models.Campaign) SerializedCampaign {
 		World:       world,
 	}
 }
+
+func SerializeCampaigns(campaigns []models.Campaign) []SerializedCampaign {
+	serializedCampaigns := make([]SerializedCampaign, 0)
+	for _, campaign := range campaigns {
+		serializedCampaigns = append(serializedCampaigns, SerializeCampaign(campaign))
+	}
+	return serializedCampaigns
+}

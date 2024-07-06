@@ -24,7 +24,7 @@ func SerializeWorld(world models.World) SerializedWorld {
 }
 
 func SerializeWorlds(worlds []models.World) []SerializedWorld {
-	var serializedWorlds []SerializedWorld
+	serializedWorlds := make([]SerializedWorld, 0)
 	for _, world := range worlds {
 		serializedWorlds = append(serializedWorlds, SerializeWorld(world))
 	}

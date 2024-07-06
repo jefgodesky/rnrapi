@@ -50,3 +50,13 @@ func WorldCreatorOnly(c *gin.Context) *models.World {
 
 	return world
 }
+
+func FilterCampaignWorldAccess(campaigns []models.Campaign, user *models.User) []models.Campaign {
+	filtered := []models.Campaign{}
+	for _, campaign := range campaigns {
+		if HasWorldAccess(&campaign.World, user) {
+			filtered = append(filtered, campaign)
+		}
+	}
+	return filtered
+}
