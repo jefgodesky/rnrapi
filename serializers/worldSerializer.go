@@ -10,7 +10,7 @@ type SerializedWorld struct {
 }
 
 func SerializeWorld(world models.World) SerializedWorld {
-	creators := []string{}
+	var creators []string
 	for _, creator := range world.Creators {
 		creators = append(creators, creator.Username)
 	}
@@ -24,7 +24,7 @@ func SerializeWorld(world models.World) SerializedWorld {
 }
 
 func SerializeWorlds(worlds []models.World) []SerializedWorld {
-	serializedWorlds := []SerializedWorld{}
+	var serializedWorlds []SerializedWorld
 	for _, world := range worlds {
 		serializedWorlds = append(serializedWorlds, SerializeWorld(world))
 	}

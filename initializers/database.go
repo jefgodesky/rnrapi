@@ -26,8 +26,12 @@ func ConnectToDB() {
 }
 
 func MigrateDB() {
-	DB.AutoMigrate(
+	err := DB.AutoMigrate(
 		&models.User{},
 		&models.World{},
 	)
+
+	if err != nil {
+		return
+	}
 }

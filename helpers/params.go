@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/jefgodesky/rnrapi/initializers"
@@ -17,7 +18,7 @@ func GetWorldFromSlug(c *gin.Context) *models.World {
 		First(&world)
 
 	if result.Error != nil {
-		if result.Error == gorm.ErrRecordNotFound {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			c.JSON(404, gin.H{"error": fmt.Sprintf("World %s not found", slug)})
 			return nil
 		}

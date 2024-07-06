@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/jefgodesky/rnrapi/helpers"
@@ -54,7 +55,7 @@ func UserRetrieve(c *gin.Context) {
 	result := initializers.DB.Where("username = ?", username).First(&user)
 
 	if result.Error != nil {
-		if result.Error == gorm.ErrRecordNotFound {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			c.JSON(404, gin.H{"error": fmt.Sprintf("User %s not found", username)})
 			return
 		}
