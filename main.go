@@ -23,12 +23,18 @@ func main() {
 		v.GET("/users/:username", controllers.UserRetrieve)
 
 		authRequired := v.Group("/")
-		authRequired.Use(middlewares.APIKeyAuthMiddleware())
+		authRequired.Use(middlewares.AuthRequired())
 		{
 			authRequired.PUT("/users", controllers.UserUpdate)
 			authRequired.PUT("/key", controllers.KeyUpdate)
 
 			authRequired.POST("/worlds", controllers.WorldCreate)
+		}
+
+		authOptional := v.Group("/")
+		authOptional.Use(middlewares.AuthOptional())
+		{
+			authOptional.GET("/worlds", controllers.WorldIndex)
 		}
 	}
 	r.Run()

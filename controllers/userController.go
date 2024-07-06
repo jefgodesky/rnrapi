@@ -74,7 +74,7 @@ func UserUpdate(c *gin.Context) {
 		return
 	}
 
-	user := helpers.GetUserFromContext(c)
+	user := helpers.GetUserFromContext(c, true)
 	user.Username = body.Username
 	if err := initializers.DB.Save(user).Error; err != nil {
 		c.JSON(500, gin.H{"Error": "Failed to update user"})

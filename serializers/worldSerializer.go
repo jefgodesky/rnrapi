@@ -22,3 +22,11 @@ func SerializeWorld(world models.World) SerializedWorld {
 		Creators: creators,
 	}
 }
+
+func SerializeWorlds(worlds []models.World) []SerializedWorld {
+	serializedWorlds := []SerializedWorld{}
+	for _, world := range worlds {
+		serializedWorlds = append(serializedWorlds, SerializeWorld(world))
+	}
+	return serializedWorlds
+}

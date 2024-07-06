@@ -42,7 +42,7 @@ func WorldCreate(c *gin.Context) {
 	}
 
 	if len(creators) == 0 {
-		authUser := helpers.GetUserFromContext(c)
+		authUser := helpers.GetUserFromContext(c, true)
 		creators = append(creators, *authUser)
 	}
 
@@ -59,4 +59,25 @@ func WorldCreate(c *gin.Context) {
 	}
 
 	c.JSON(200, serializers.SerializeWorld(world))
+}
+
+func WorldIndex(c *gin.Context) {
+	var worlds []models.World
+	user := helpers.GetUserFromContext(c, false)
+
+	if user != nil {
+		initializers.DB.
+			Preload("Creators").
+			Where("public = ? OR id in (SELECT world_id FROM world_creators WHERE user_id = ?)", true, user.ID).
+			Find(&worlds)
+	} else {
+		initializers.DB.
+			Preload("Creators").
+			Where("Public = ?", true).
+			Find(&worlds)
+	}
+
+	c.JSON(200, gin.H{
+		"worlds": serializers.SerializeWorlds(worlds),
+	})
 }

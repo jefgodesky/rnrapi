@@ -8,7 +8,7 @@ import (
 )
 
 func KeyUpdate(c *gin.Context) {
-	user := helpers.GetUserFromContext(c)
+	user := helpers.GetUserFromContext(c, true)
 	token, hash, key := helpers.GenerateAPIKey(c)
 
 	user.Token = token
