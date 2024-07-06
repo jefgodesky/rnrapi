@@ -7,6 +7,21 @@ import (
 	"github.com/jefgodesky/rnrapi/models"
 )
 
+func BodyToUserFields(c *gin.Context) (string, string, string) {
+	var body struct {
+		Username string
+		Name     string
+		Bio      string
+	}
+
+	if err := c.BindJSON(&body); err != nil {
+		c.JSON(400, gin.H{"error": "Invalid input"})
+		return "", "", ""
+	}
+
+	return body.Username, body.Name, body.Bio
+}
+
 func BodyToWorld(c *gin.Context) *models.World {
 	var body struct {
 		Name     string   `json:"name"`

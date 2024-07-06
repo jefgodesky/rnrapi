@@ -13,23 +13,22 @@ import (
 )
 
 func UserCreate(c *gin.Context) {
-	var body struct {
-		Username string
-	}
-
-	if err := c.Bind(&body); err != nil {
-		c.JSON(400, gin.H{"error": "Invalid input"})
+	username, name, bio := helpers.BodyToUserFields(c)
+	if username == "" || name == "" || bio == "" {
 		return
 	}
 
 	token, hash, key := helpers.GenerateAPIKey(c)
+	if token == "" || hash == "" || key == "" {
+		return
+	}
 
-	user := models.User{Username: body.Username, Token: token, Secret: hash, Active: true}
+	user := models.User{Username: username, Name: name, Bio: bio, Token: token, Secret: hash, Active: true}
 	result := initializers.DB.Create(&user)
 	if result.Error != nil {
-		username := "duplicate key value violates unique constraint"
-		if strings.Contains(result.Error.Error(), username) {
-			c.JSON(409, gin.H{"error": fmt.Sprintf("Username %s already exists", body.Username)})
+		usernameError := "duplicate key value violates unique constraint"
+		if strings.Contains(result.Error.Error(), usernameError) {
+			c.JSON(409, gin.H{"error": fmt.Sprintf("Username %s already exists", username)})
 		} else {
 			c.JSON(400, gin.H{"error": "Failed to create user"})
 		}
@@ -67,16 +66,16 @@ func UserRetrieve(c *gin.Context) {
 }
 
 func UserUpdate(c *gin.Context) {
-	var body struct {
-		Username string `json:"username"`
-	}
-	if err := c.Bind(&body); err != nil {
-		c.JSON(400, gin.H{"error": "Invalid input"})
+	username, name, bio := helpers.BodyToUserFields(c)
+	if username == "" || name == "" || bio == "" {
 		return
 	}
 
 	user := helpers.GetUserFromContext(c, true)
-	user.Username = body.Username
+	user.Username = username
+	user.Name = name
+	user.Bio = bio
+
 	if err := initializers.DB.Save(user).Error; err != nil {
 		c.JSON(500, gin.H{"Error": "Failed to update user"})
 		return

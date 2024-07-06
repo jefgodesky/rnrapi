@@ -11,6 +11,8 @@ import (
 type User struct {
 	gorm.Model
 	Username string `gorm:"uniqueIndex" json:"username"`
+	Name     string `json:"name"`
+	Bio      string `json:"bio"`
 	Token    string `gorm:"uniqueIndex" json:"-"`
 	Secret   string `json:"-"`
 	Active   bool   `json:"active"`
