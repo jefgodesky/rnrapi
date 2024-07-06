@@ -21,17 +21,7 @@ func UserCreate(c *gin.Context) {
 		return
 	}
 
-	token, secret, err := models.GenerateAPIKey()
-	if err != nil {
-		c.JSON(400, gin.H{"error": "Failed to generate API key"})
-		return
-	}
-
-	hash, err := models.HashAPIKey(secret)
-	if err != nil {
-		c.JSON(400, gin.H{"error": "Failed to hash API key"})
-		return
-	}
+	token, hash, key := helpers.GenerateAPIKey(c)
 
 	user := models.User{Username: body.Username, Token: token, Secret: hash, Active: true}
 	result := initializers.DB.Create(&user)
@@ -47,7 +37,6 @@ func UserCreate(c *gin.Context) {
 
 	location := fmt.Sprintf("/v1/users/%s", user.Username)
 	c.Header("Location", location)
-	key := token + "." + secret
 	c.JSON(200, serializers.SerializeUser(user, &key))
 }
 

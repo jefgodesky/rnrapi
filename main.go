@@ -26,6 +26,7 @@ func main() {
 		authRequired.Use(middlewares.APIKeyAuthMiddleware())
 		{
 			authRequired.PUT("/users", controllers.UserUpdate)
+			authRequired.PUT("/key", controllers.KeyUpdate)
 		}
 	}
 	r.Run()
