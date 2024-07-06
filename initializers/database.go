@@ -29,6 +29,7 @@ func MigrateDB() {
 	err := DB.AutoMigrate(
 		&models.User{},
 		&models.World{},
+		&models.Campaign{},
 	)
 
 	if err != nil {

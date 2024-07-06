@@ -70,3 +70,63 @@ func BodyToWorld(c *gin.Context) *models.World {
 
 	return &world
 }
+
+func BodyToCampaign(c *gin.Context) *models.Campaign {
+	var body struct {
+		Slug        string   `json:"slug"`
+		Name        string   `json:"name"`
+		Description string   `json:"description"`
+		GMs         []string `json:"creators"`
+		Public      *bool    `json:"public"`
+		World       string   `json:"world"`
+	}
+
+	if err := c.Bind(&body); err != nil {
+		c.JSON(400, gin.H{"error": "Invalid input"})
+		return nil
+	}
+
+	campaignSlug := body.Slug
+	if campaignSlug == "" {
+		campaignSlug = slug.Make(body.Name)
+	}
+
+	isPublic := true
+	if body.Public != nil {
+		isPublic = *body.Public
+	}
+
+	world := GetWorld(body.World, c)
+	if world == nil {
+		c.JSON(400, gin.H{"error": "World not found"})
+		return nil
+	}
+
+	var gms []models.User
+	for _, gm := range body.GMs {
+		var user models.User
+		result := initializers.DB.
+			Where("username = ? AND active = ?", gm, true).
+			First(&user)
+		if result.Error == nil {
+			gms = append(gms, user)
+		}
+	}
+
+	if len(gms) == 0 {
+		authUser := GetUserFromContext(c, true)
+		gms = append(gms, *authUser)
+	}
+
+	campaign := models.Campaign{
+		Slug:        campaignSlug,
+		Name:        body.Name,
+		Description: body.Description,
+		GMs:         gms,
+		Public:      isPublic,
+		WorldID:     world.ID,
+		World:       *world,
+	}
+
+	return &campaign
+}
