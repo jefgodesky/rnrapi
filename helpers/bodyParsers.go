@@ -96,7 +96,7 @@ func BodyToCampaign(c *gin.Context) *models.Campaign {
 		isPublic = *body.Public
 	}
 
-	world := GetWorld(body.World, c)
+	world := GetWorld(c, body.World)
 	if world == nil {
 		c.JSON(400, gin.H{"error": "World not found"})
 		return nil

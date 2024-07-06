@@ -41,3 +41,16 @@ func CampaignIndex(c *gin.Context) {
 		"campaigns": serializers.SerializeCampaigns(filtered),
 	})
 }
+
+func CampaignRetrieve(c *gin.Context) {
+	campaign := helpers.GetCampaignFromSlug(c)
+	user := helpers.GetUserFromContext(c, false)
+	allowed := helpers.HasCampaignAccess(campaign, user)
+
+	if !allowed {
+		c.JSON(403, gin.H{"error": "Forbidden"})
+		return
+	}
+
+	c.JSON(200, serializers.SerializeCampaign(*campaign))
+}

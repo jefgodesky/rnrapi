@@ -52,11 +52,41 @@ func WorldCreatorOnly(c *gin.Context) *models.World {
 }
 
 func FilterCampaignWorldAccess(campaigns []models.Campaign, user *models.User) []models.Campaign {
-	filtered := []models.Campaign{}
+	var filtered []models.Campaign
 	for _, campaign := range campaigns {
 		if HasWorldAccess(&campaign.World, user) {
 			filtered = append(filtered, campaign)
 		}
 	}
 	return filtered
+}
+
+func IsCampaignGM(campaign *models.Campaign, user *models.User) bool {
+	if user == nil || campaign == nil {
+		return false
+	}
+
+	for _, gm := range campaign.GMs {
+		if gm.ID == user.ID {
+			return true
+		}
+	}
+
+	return false
+}
+
+func HasCampaignAccess(campaign *models.Campaign, user *models.User) bool {
+	if !HasWorldAccess(&campaign.World, user) {
+		return false
+	}
+
+	if campaign.Public {
+		return true
+	}
+
+	if IsCampaignGM(campaign, user) {
+		return true
+	}
+
+	return false
 }

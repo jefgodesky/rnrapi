@@ -7,5 +7,10 @@ import (
 
 func GetWorldFromSlug(c *gin.Context) *models.World {
 	slug := c.Param("slug")
-	return GetWorld(slug, c)
+	return GetWorld(c, slug)
+}
+
+func GetCampaignFromSlug(c *gin.Context) *models.Campaign {
+	slug := c.Param("slug")
+	return GetCampaign(c, slug)
 }
