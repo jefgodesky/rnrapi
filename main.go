@@ -29,6 +29,7 @@ func main() {
 			authRequired.PUT("/key", controllers.KeyUpdate)
 
 			authRequired.POST("/worlds", controllers.WorldCreate)
+			authRequired.PUT("/worlds/:slug", controllers.WorldUpdate)
 		}
 
 		authOptional := v.Group("/")

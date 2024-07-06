@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/gosimple/slug"
 	"github.com/jefgodesky/rnrapi/helpers"
 	"github.com/jefgodesky/rnrapi/initializers"
 	"github.com/jefgodesky/rnrapi/models"
@@ -10,55 +9,14 @@ import (
 )
 
 func WorldCreate(c *gin.Context) {
-	var body struct {
-		Name     string   `json:"name"`
-		Slug     string   `json:"slug"`
-		Public   *bool    `json:"public"`
-		Creators []string `json:"creators"`
-	}
-
-	if err := c.Bind(&body); err != nil {
-		c.JSON(400, gin.H{"error": "Invalid input"})
-		return
-	}
-
-	worldSlug := body.Slug
-	if worldSlug == "" {
-		worldSlug = slug.Make(body.Name)
-	}
-
-	isPublic := true
-	if body.Public != nil {
-		isPublic = *body.Public
-	}
-
-	var creators []models.User
-	for _, creator := range body.Creators {
-		var user models.User
-		result := initializers.DB.Where("username = ? AND active = ?", creator, true).First(&user)
-		if result.Error == nil {
-			creators = append(creators, user)
-		}
-	}
-
-	if len(creators) == 0 {
-		authUser := helpers.GetUserFromContext(c, true)
-		creators = append(creators, *authUser)
-	}
-
-	world := models.World{
-		Name:     body.Name,
-		Slug:     worldSlug,
-		Public:   isPublic,
-		Creators: creators,
-	}
+	world := helpers.BodyToWorld(c)
 
 	if result := initializers.DB.Create(&world); result.Error != nil {
 		c.JSON(500, gin.H{"error": "Failed to create world"})
 		return
 	}
 
-	c.JSON(200, serializers.SerializeWorld(world))
+	c.JSON(200, serializers.SerializeWorld(*world))
 }
 
 func WorldIndex(c *gin.Context) {
@@ -89,6 +47,30 @@ func WorldRetrieve(c *gin.Context) {
 
 	if !allowed {
 		c.JSON(403, gin.H{"error": "Forbidden"})
+		return
+	}
+
+	c.JSON(200, serializers.SerializeWorld(*world))
+}
+
+func WorldUpdate(c *gin.Context) {
+	world := helpers.GetWorldFromSlug(c)
+	user := helpers.GetUserFromContext(c, false)
+	isCreator := helpers.IsWorldCreator(world, user)
+
+	if !isCreator {
+		c.JSON(403, gin.H{"error": "Forbidden"})
+		return
+	}
+
+	newWorld := helpers.BodyToWorld(c)
+	world.Name = newWorld.Name
+	world.Slug = newWorld.Slug
+	world.Public = newWorld.Public
+	world.Creators = newWorld.Creators
+
+	if err := initializers.DB.Save(world).Error; err != nil {
+		c.JSON(500, gin.H{"Error": "Failed to update world"})
 		return
 	}
 
