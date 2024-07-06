@@ -54,3 +54,26 @@ func CampaignRetrieve(c *gin.Context) {
 
 	c.JSON(200, serializers.SerializeCampaign(*campaign))
 }
+
+func CampaignUpdate(c *gin.Context) {
+	campaign := helpers.CampaignGMOnly(c)
+	if campaign == nil {
+		return
+	}
+
+	newCampaign := helpers.BodyToCampaign(c)
+	campaign.Slug = newCampaign.Slug
+	campaign.Name = newCampaign.Name
+	campaign.Description = newCampaign.Description
+	campaign.GMs = newCampaign.GMs
+	campaign.Public = newCampaign.Public
+	campaign.WorldID = newCampaign.WorldID
+	campaign.World = newCampaign.World
+
+	if err := initializers.DB.Save(campaign).Error; err != nil {
+		c.JSON(500, gin.H{"Error": "Failed to update campaign"})
+		return
+	}
+
+	c.JSON(200, serializers.SerializeCampaign(*campaign))
+}

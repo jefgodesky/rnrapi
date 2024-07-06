@@ -90,3 +90,22 @@ func HasCampaignAccess(campaign *models.Campaign, user *models.User) bool {
 
 	return false
 }
+
+func CampaignGMOnly(c *gin.Context) *models.Campaign {
+	campaign := GetCampaignFromSlug(c)
+	if campaign == nil {
+		return nil
+	}
+
+	user := GetUserFromContext(c, true)
+	if user == nil {
+		return nil
+	}
+
+	if !HasCampaignAccess(campaign, user) || !IsCampaignGM(campaign, user) {
+		c.JSON(403, gin.H{"error": "Forbidden"})
+		return nil
+	}
+
+	return campaign
+}
