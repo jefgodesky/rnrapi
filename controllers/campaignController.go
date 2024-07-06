@@ -77,3 +77,17 @@ func CampaignUpdate(c *gin.Context) {
 
 	c.JSON(200, serializers.SerializeCampaign(*campaign))
 }
+
+func CampaignDestroy(c *gin.Context) {
+	campaign := helpers.CampaignGMOnly(c)
+	if campaign == nil {
+		return
+	}
+
+	if err := initializers.DB.Delete(&campaign).Error; err != nil {
+		c.JSON(500, gin.H{"Error": "Failed to destroy campaign"})
+		return
+	}
+
+	c.JSON(200, serializers.SerializeCampaign(*campaign))
+}
