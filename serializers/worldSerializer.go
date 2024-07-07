@@ -6,13 +6,13 @@ import (
 )
 
 type SerializedWorld struct {
-	Name      string                        `json:"name"`
-	Slug      string                        `json:"slug"`
-	Public    bool                          `json:"public"`
-	Creators  []string                      `json:"creators"`
-	Species   []SerializedSpeciesSansWorld  `json:"species"`
-	Societies []SerializedSocietySansWorld  `json:"societies"`
-	Campaigns []SerializedCampaignSansWorld `json:"campaigns"`
+	Name      string                       `json:"name"`
+	Slug      string                       `json:"slug"`
+	Public    bool                         `json:"public"`
+	Creators  []string                     `json:"creators"`
+	Species   []SerializedSpeciesSansWorld `json:"species"`
+	Societies []SerializedSocietySansWorld `json:"societies"`
+	Campaigns []CampaignStub               `json:"campaigns"`
 }
 
 type WorldStub struct {
@@ -29,9 +29,9 @@ func SerializeWorld(world models.World) SerializedWorld {
 	var campaigns []models.Campaign
 	initializers.DB.Where("world_id = ?", world.ID).Preload("GMs").Find(&campaigns)
 
-	serializedCampaigns := make([]SerializedCampaignSansWorld, len(campaigns))
+	serializedCampaigns := make([]CampaignStub, len(campaigns))
 	for i, campaign := range campaigns {
-		serializedCampaigns[i] = SerializeCampaignSansWorld(campaign)
+		serializedCampaigns[i] = StubCampaign(campaign)
 	}
 
 	var species []models.Species
@@ -70,9 +70,9 @@ func StubWorld(world models.World) WorldStub {
 }
 
 func SerializeWorlds(worlds []models.World) []WorldStub {
-	serializedWorlds := make([]WorldStub, 0)
+	stubs := make([]WorldStub, 0)
 	for _, world := range worlds {
-		serializedWorlds = append(serializedWorlds, StubWorld(world))
+		stubs = append(stubs, StubWorld(world))
 	}
-	return serializedWorlds
+	return stubs
 }

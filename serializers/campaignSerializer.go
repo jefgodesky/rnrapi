@@ -11,12 +11,9 @@ type SerializedCampaign struct {
 	World       WorldStub `json:"world"`
 }
 
-type SerializedCampaignSansWorld struct {
-	Name        string   `json:"name"`
-	Slug        string   `json:"slug"`
-	Description string   `json:"description"`
-	GMs         []string `json:"gms"`
-	Public      bool     `json:"public"`
+type CampaignStub struct {
+	Name string `json:"name"`
+	Path string `json:"path"`
 }
 
 func SerializeCampaign(campaign models.Campaign) SerializedCampaign {
@@ -37,21 +34,18 @@ func SerializeCampaign(campaign models.Campaign) SerializedCampaign {
 	}
 }
 
-func SerializeCampaignSansWorld(campaign models.Campaign) SerializedCampaignSansWorld {
+func StubCampaign(campaign models.Campaign) CampaignStub {
 	serialized := SerializeCampaign(campaign)
-	return SerializedCampaignSansWorld{
-		Name:        serialized.Name,
-		Slug:        serialized.Slug,
-		Description: serialized.Description,
-		GMs:         serialized.GMs,
-		Public:      serialized.Public,
+	return CampaignStub{
+		Name: serialized.Name,
+		Path: "/campaigns/" + campaign.World.Slug + "/" + campaign.Slug,
 	}
 }
 
-func SerializeCampaigns(campaigns []models.Campaign) []SerializedCampaign {
-	serializedCampaigns := make([]SerializedCampaign, 0)
+func SerializeCampaigns(campaigns []models.Campaign) []CampaignStub {
+	stubs := make([]CampaignStub, 0)
 	for _, campaign := range campaigns {
-		serializedCampaigns = append(serializedCampaigns, SerializeCampaign(campaign))
+		stubs = append(stubs, StubCampaign(campaign))
 	}
-	return serializedCampaigns
+	return stubs
 }
