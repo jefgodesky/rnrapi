@@ -21,3 +21,9 @@ func GetSpeciesFromSlug(c *gin.Context) *models.Species {
 	slug := c.Param("slug")
 	return GetSpecies(c, world, slug)
 }
+
+func GetSocietyFromSlug(c *gin.Context) *models.Society {
+	world := c.Param("world")
+	slug := c.Param("slug")
+	return GetSociety(c, world, slug)
+}

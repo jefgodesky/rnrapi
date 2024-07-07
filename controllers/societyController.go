@@ -33,3 +33,16 @@ func SocietyIndex(c *gin.Context) {
 		"societies": serializers.SerializeSocieties(filtered),
 	})
 }
+
+func SocietyRetrieve(c *gin.Context) {
+	society := helpers.GetSocietyFromSlug(c)
+	user := helpers.GetUserFromContext(c, false)
+	allowed := helpers.HasWorldAccess(&society.World, user)
+
+	if !allowed {
+		c.JSON(403, gin.H{"error": "Forbidden"})
+		return
+	}
+
+	c.JSON(200, serializers.SerializeSociety(*society))
+}

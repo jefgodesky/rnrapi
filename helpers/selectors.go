@@ -14,6 +14,7 @@ var PreloadPaths = map[string][]string{
 	"World":    {"Creators"},
 	"Campaign": {"GMs", "World", "World.Creators"},
 	"Species":  {"World", "World.Creators"},
+	"Society":  {"World", "World.Creators"},
 }
 
 func GetInstance(c *gin.Context, model interface{}, slug string, conditions map[string]interface{}) bool {
@@ -83,4 +84,19 @@ func GetSpecies(c *gin.Context, world string, slug string) *models.Species {
 		return nil
 	}
 	return &species
+}
+
+func GetSociety(c *gin.Context, world string, slug string) *models.Society {
+	w := GetWorld(c, world)
+	if w == nil {
+		return nil
+	}
+
+	var society models.Society
+	if !GetInstance(c, &society, slug, map[string]interface{}{
+		"world_id": w.ID,
+	}) {
+		return nil
+	}
+	return &society
 }
