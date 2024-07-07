@@ -61,6 +61,8 @@ func main() {
 
 			authOptional.GET("/societies", controllers.SocietyIndex)
 			authOptional.GET("/societies/:world/:slug", controllers.SocietyRetrieve)
+
+			authOptional.GET("/characters", controllers.CharacterIndex)
 		}
 	}
 

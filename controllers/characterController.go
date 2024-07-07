@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jefgodesky/rnrapi/helpers"
 	"github.com/jefgodesky/rnrapi/initializers"
+	"github.com/jefgodesky/rnrapi/models"
 	"github.com/jefgodesky/rnrapi/serializers"
 )
 
@@ -19,4 +20,23 @@ func CharacterCreate(c *gin.Context) {
 	}
 
 	c.JSON(200, serializers.SerializeCharacter(*character))
+}
+
+func CharacterIndex(c *gin.Context) {
+	var characters []models.Character
+	user := helpers.GetUserFromContext(c, false)
+
+	if user != nil {
+		initializers.DB.
+			Where("public = ? OR player_id = ?", true, user.ID).
+			Find(&characters)
+	} else {
+		initializers.DB.
+			Where("public = ?", true).
+			Find(&characters)
+	}
+
+	c.JSON(200, gin.H{
+		"characters": serializers.SerializeCharacters(characters),
+	})
 }

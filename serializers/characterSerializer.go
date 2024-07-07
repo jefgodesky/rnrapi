@@ -21,6 +21,7 @@ type SerializedResistances struct {
 }
 
 type SerializedCharacter struct {
+	ID          string                `json:"id"`
 	Name        string                `json:"name"`
 	Description string                `json:"description"`
 	Abilities   SerializedAbilities   `json:"abilities"`
@@ -52,6 +53,7 @@ func SerializeCharacter(char models.Character) SerializedCharacter {
 	}
 
 	return SerializedCharacter{
+		ID:          char.ID,
 		Name:        char.Name,
 		Description: char.Description,
 		Abilities:   abilities,
