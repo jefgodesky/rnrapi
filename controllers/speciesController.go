@@ -69,3 +69,17 @@ func SpeciesUpdate(c *gin.Context) {
 
 	c.JSON(200, serializers.SerializeSpecies(*species))
 }
+
+func SpeciesDestroy(c *gin.Context) {
+	species := helpers.SpeciesCreatorOnly(c)
+	if species == nil {
+		return
+	}
+
+	if err := initializers.DB.Delete(&species).Error; err != nil {
+		c.JSON(500, gin.H{"Error": "Failed to destroy species"})
+		return
+	}
+
+	c.JSON(200, serializers.SerializeSpecies(*species))
+}

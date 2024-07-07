@@ -38,6 +38,7 @@ func main() {
 
 			authRequired.POST("/species", controllers.SpeciesCreate)
 			authRequired.PUT("/species/:world/:slug", controllers.SpeciesUpdate)
+			authRequired.DELETE("/species/:world/:slug", controllers.SpeciesDestroy)
 		}
 
 		authOptional := v.Group("/")
