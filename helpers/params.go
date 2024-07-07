@@ -32,3 +32,8 @@ func GetUserFromSlug(c *gin.Context) *models.User {
 	username := c.Param("username")
 	return GetUser(c, username)
 }
+
+func GetCharacterFromSlug(c *gin.Context) *models.Character {
+	id := c.Param("id")
+	return GetCharacter(c, id)
+}

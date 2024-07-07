@@ -40,3 +40,18 @@ func CharacterIndex(c *gin.Context) {
 		"characters": serializers.SerializeCharacters(characters),
 	})
 }
+
+func CharacterRetrieve(c *gin.Context) {
+	char := helpers.GetCharacterFromSlug(c)
+	user := helpers.GetUserFromContext(c, false)
+	if char == nil {
+		return
+	}
+
+	if !char.Public && char.PlayerID != user.ID {
+		c.JSON(403, gin.H{"error": "Forbidden"})
+		return
+	}
+
+	c.JSON(200, serializers.SerializeCharacter(*char))
+}

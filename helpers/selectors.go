@@ -116,3 +116,19 @@ func GetUser(c *gin.Context, username string) *models.User {
 
 	return &user
 }
+
+func GetCharacter(c *gin.Context, id string) *models.Character {
+	var char models.Character
+	result := initializers.DB.Where("id = ?", id).First(&char)
+
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			c.JSON(404, gin.H{"error": fmt.Sprintf("Character %s not found", id)})
+			return nil
+		}
+		c.JSON(500, gin.H{"error": "Failed to retrieve character"})
+		return nil
+	}
+
+	return &char
+}
