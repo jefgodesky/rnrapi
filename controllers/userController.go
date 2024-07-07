@@ -1,14 +1,12 @@
 package controllers
 
 import (
-	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/jefgodesky/rnrapi/helpers"
 	"github.com/jefgodesky/rnrapi/initializers"
 	"github.com/jefgodesky/rnrapi/models"
 	"github.com/jefgodesky/rnrapi/serializers"
-	"gorm.io/gorm"
 	"strings"
 )
 
@@ -49,20 +47,11 @@ func UserIndex(c *gin.Context) {
 }
 
 func UserRetrieve(c *gin.Context) {
-	username := c.Param("username")
-	var user models.User
-	result := initializers.DB.Where("username = ?", username).First(&user)
-
-	if result.Error != nil {
-		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			c.JSON(404, gin.H{"error": fmt.Sprintf("User %s not found", username)})
-			return
-		}
-		c.JSON(500, gin.H{"error": "Failed to retrieve user"})
+	user := helpers.GetUserFromSlug(c)
+	if user == nil {
 		return
 	}
-
-	c.JSON(200, serializers.SerializeUser(user, nil))
+	c.JSON(200, serializers.SerializeUser(*user, nil))
 }
 
 func UserUpdate(c *gin.Context) {

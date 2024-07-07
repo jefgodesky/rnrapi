@@ -100,3 +100,19 @@ func GetSociety(c *gin.Context, world string, slug string) *models.Society {
 	}
 	return &society
 }
+
+func GetUser(c *gin.Context, username string) *models.User {
+	var user models.User
+	result := initializers.DB.Where("username = ?", username).First(&user)
+
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			c.JSON(404, gin.H{"error": fmt.Sprintf("User %s not found", username)})
+			return nil
+		}
+		c.JSON(500, gin.H{"error": "Failed to retrieve user"})
+		return nil
+	}
+
+	return &user
+}
