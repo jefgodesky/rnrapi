@@ -25,7 +25,7 @@ func ConnectToDB() {
 	}
 }
 
-func MigrateDB() {
+func MigrateDB() error {
 	err := DB.AutoMigrate(
 		&models.User{},
 		&models.World{},
@@ -33,6 +33,13 @@ func MigrateDB() {
 	)
 
 	if err != nil {
-		return
+		return err
 	}
+
+	err = DB.Exec("CREATE UNIQUE INDEX idx_campaign_world_slug ON campaigns (world_id, slug)").Error
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

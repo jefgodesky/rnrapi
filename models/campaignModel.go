@@ -6,7 +6,7 @@ import (
 
 type Campaign struct {
 	gorm.Model
-	Slug        string `gorm:"unique" json:"slug"`
+	Slug        string `json:"slug"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	GMs         []User `gorm:"many2many:campaign_gms;" json:"gms"`

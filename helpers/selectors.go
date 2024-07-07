@@ -15,7 +15,7 @@ var PreloadPaths = map[string][]string{
 	"Campaign": {"GMs", "World", "World.Creators"},
 }
 
-func GetInstance(c *gin.Context, model interface{}, slug string) bool {
+func GetInstance(c *gin.Context, model interface{}, slug string, conditions map[string]interface{}) bool {
 	modelType := reflect.TypeOf(model).Elem().Name()
 	preloadPaths, ok := PreloadPaths[modelType]
 	if !ok {
@@ -28,7 +28,12 @@ func GetInstance(c *gin.Context, model interface{}, slug string) bool {
 		db = db.Preload(path)
 	}
 
-	result := db.Where("slug = ?", slug).First(model)
+	query := db.Where("slug = ?", slug)
+	for key, value := range conditions {
+		query = query.Where(fmt.Sprintf("%s = ?", key), value)
+	}
+
+	result := query.First(model)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			c.JSON(404, gin.H{"error": fmt.Sprintf("%T %s not found", model, slug)})
@@ -43,15 +48,22 @@ func GetInstance(c *gin.Context, model interface{}, slug string) bool {
 
 func GetWorld(c *gin.Context, slug string) *models.World {
 	var world models.World
-	if !GetInstance(c, &world, slug) {
+	if !GetInstance(c, &world, slug, map[string]interface{}{}) {
 		return nil
 	}
 	return &world
 }
 
-func GetCampaign(c *gin.Context, slug string) *models.Campaign {
+func GetCampaign(c *gin.Context, world string, slug string) *models.Campaign {
+	w := GetWorld(c, world)
+	if w == nil {
+		return nil
+	}
+
 	var campaign models.Campaign
-	if !GetInstance(c, &campaign, slug) {
+	if !GetInstance(c, &campaign, slug, map[string]interface{}{
+		"world_id": w.ID,
+	}) {
 		return nil
 	}
 	return &campaign

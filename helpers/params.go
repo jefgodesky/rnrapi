@@ -11,6 +11,7 @@ func GetWorldFromSlug(c *gin.Context) *models.World {
 }
 
 func GetCampaignFromSlug(c *gin.Context) *models.Campaign {
+	world := c.Param("world")
 	slug := c.Param("slug")
-	return GetCampaign(c, slug)
+	return GetCampaign(c, world, slug)
 }

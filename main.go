@@ -33,8 +33,8 @@ func main() {
 			authRequired.DELETE("/worlds/:slug", controllers.WorldDestroy)
 
 			authRequired.POST("/campaigns", controllers.CampaignCreate)
-			authRequired.PUT("/campaigns/:slug", controllers.CampaignUpdate)
-			authRequired.DELETE("/campaigns/:slug", controllers.CampaignDestroy)
+			authRequired.PUT("/campaigns/:world/:slug", controllers.CampaignUpdate)
+			authRequired.DELETE("/campaigns/:world/:slug", controllers.CampaignDestroy)
 		}
 
 		authOptional := v.Group("/")
@@ -44,7 +44,7 @@ func main() {
 			authOptional.GET("/worlds/:slug", controllers.WorldRetrieve)
 
 			authOptional.GET("/campaigns", controllers.CampaignIndex)
-			authOptional.GET("/campaigns/:slug", controllers.CampaignRetrieve)
+			authOptional.GET("/campaigns/:world/:slug", controllers.CampaignRetrieve)
 		}
 	}
 
