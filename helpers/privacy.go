@@ -163,3 +163,14 @@ func FilterSpeciesWorldAccess(species []models.Species, user *models.User) []mod
 	}
 	return filtered
 }
+
+func FilterSocietiesWorldAccess(societies []models.Society, user *models.User) []models.Society {
+	worldAccess := filterWorldAccess(societies, user).([]models.Society)
+	filtered := make([]models.Society, 0)
+	for _, society := range worldAccess {
+		if society.Public || IsWorldCreator(&society.World, user) {
+			filtered = append(filtered, society)
+		}
+	}
+	return filtered
+}
