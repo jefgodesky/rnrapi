@@ -25,12 +25,28 @@ func SocietyCreate(c *gin.Context) {
 
 func SocietyIndex(c *gin.Context) {
 	var societies []models.Society
-	initializers.DB.Preload(clause.Associations).Find(&societies)
-
 	user := helpers.GetUserFromContext(c, false)
-	filtered := helpers.FilterSocietiesWorldAccess(societies, user)
+	query := initializers.DB.
+		Model(&models.Society{}).
+		Preload(clause.Associations)
+
+	if user != nil {
+		query.Joins("JOIN worlds ON worlds.id = societies.world_id").
+			Where("(societies.public = ? AND worlds.public = ?) OR societies.world_id IN (SELECT world_id FROM world_creators WHERE user_id = ?)", true, true, user.ID)
+	} else {
+		query.Joins("JOIN worlds ON worlds.id = societies.world_id").
+			Where("societies.public = ? AND worlds.public = ?", true, true)
+	}
+
+	var total int64
+	query.Count(&total)
+	query.Scopes(helpers.Paginate(c)).Find(&societies)
+
 	c.JSON(200, gin.H{
-		"societies": serializers.SerializeSocieties(filtered),
+		"total":     total,
+		"page":      c.GetInt("page"),
+		"page_size": c.GetInt("page_size"),
+		"societies": serializers.SerializeSocieties(societies),
 	})
 }
 
