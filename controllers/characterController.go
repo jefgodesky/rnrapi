@@ -83,3 +83,17 @@ func CharacterUpdate(c *gin.Context) {
 
 	c.JSON(200, serializers.SerializeCharacter(*char))
 }
+
+func CharacterDestroy(c *gin.Context) {
+	char := helpers.CharacterPlayerOnly(c)
+	if char == nil {
+		return
+	}
+
+	if err := initializers.DB.Delete(&char).Error; err != nil {
+		c.JSON(500, gin.H{"Error": "Failed to destroy character"})
+		return
+	}
+
+	c.JSON(200, serializers.SerializeCharacter(*char))
+}
