@@ -247,6 +247,7 @@ func BodyToCharacter(c *gin.Context) *models.Character {
 		Abilities   AbilitiesBody `json:"abilities"`
 		Notes       []string      `json:"notes"`
 		Public      *bool         `json:"public"`
+		PC          bool          `json:"pc"`
 		Player      string        `json:"player"`
 	}
 
@@ -282,6 +283,7 @@ func BodyToCharacter(c *gin.Context) *models.Character {
 		Wis:         body.Abilities.Wisdom,
 		Cha:         body.Abilities.Charisma,
 		Notes:       notesJSON,
+		PC:          body.PC,
 		Public:      isPublic,
 		PlayerID:    player.ID,
 		Player:      *player,

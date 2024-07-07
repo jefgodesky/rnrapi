@@ -34,6 +34,7 @@ type Character struct {
 	Wis         int             `json:"wisdom"`
 	Cha         int             `json:"charisma"`
 	Notes       json.RawMessage `gorm:"type:json" json:"notes"`
+	PC          bool            `json:"pc"`
 	Public      bool            `json:"public"`
 	PlayerID    uint            `json:"player_id"`
 	Player      User            `gorm:"foreignKey:PlayerID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"player"`

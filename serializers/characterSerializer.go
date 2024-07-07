@@ -27,6 +27,7 @@ type SerializedCharacter struct {
 	Abilities   SerializedAbilities   `json:"abilities"`
 	Resistances SerializedResistances `json:"resistances"`
 	Notes       []string              `json:"notes"`
+	PC          bool                  `json:"pc"`
 	Public      bool                  `json:"public"`
 	Player      string                `json:"player"`
 }
@@ -64,6 +65,7 @@ func SerializeCharacter(char models.Character) SerializedCharacter {
 		Abilities:   abilities,
 		Resistances: resistances,
 		Notes:       notes,
+		PC:          char.PC,
 		Public:      char.Public,
 		Player:      char.Player.Username,
 	}
