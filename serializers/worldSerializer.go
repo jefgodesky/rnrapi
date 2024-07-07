@@ -10,7 +10,7 @@ type SerializedWorld struct {
 	Slug      string                       `json:"slug"`
 	Public    bool                         `json:"public"`
 	Creators  []string                     `json:"creators"`
-	Species   []SerializedSpeciesSansWorld `json:"species"`
+	Species   []SpeciesStub                `json:"species"`
 	Societies []SerializedSocietySansWorld `json:"societies"`
 	Campaigns []CampaignStub               `json:"campaigns"`
 }
@@ -37,9 +37,9 @@ func SerializeWorld(world models.World) SerializedWorld {
 	var species []models.Species
 	initializers.DB.Where("world_id = ?", world.ID).Find(&species)
 
-	serializedSpecies := make([]SerializedSpeciesSansWorld, len(species))
+	serializedSpecies := make([]SpeciesStub, len(species))
 	for i, sp := range species {
-		serializedSpecies[i] = SerializeSpeciesSansWorld(sp)
+		serializedSpecies[i] = StubSpecies(sp)
 	}
 
 	var societies []models.Society

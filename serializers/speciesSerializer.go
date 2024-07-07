@@ -17,14 +17,9 @@ type SerializedSpecies struct {
 	World       WorldStub         `json:"world"`
 }
 
-type SerializedSpeciesSansWorld struct {
-	Name        string            `json:"name"`
-	Slug        string            `json:"slug"`
-	Description string            `json:"description"`
-	Affinities  enums.AbilityPair `json:"affinities"`
-	Aversion    enums.Ability     `json:"aversion"`
-	Stages      json.RawMessage   `json:"stages"`
-	Public      bool              `json:"public"`
+type SpeciesStub struct {
+	Name string `json:"name"`
+	Path string `json:"path"`
 }
 
 func SerializeSpecies(species models.Species) SerializedSpecies {
@@ -41,22 +36,17 @@ func SerializeSpecies(species models.Species) SerializedSpecies {
 	}
 }
 
-func SerializeSpeciesSansWorld(species models.Species) SerializedSpeciesSansWorld {
-	return SerializedSpeciesSansWorld{
-		Name:        species.Name,
-		Slug:        species.Slug,
-		Description: species.Description,
-		Affinities:  species.Affinities,
-		Aversion:    species.Aversion,
-		Stages:      species.Stages,
-		Public:      species.Public,
+func StubSpecies(species models.Species) SpeciesStub {
+	return SpeciesStub{
+		Name: species.Name,
+		Path: "/species/" + species.World.Slug + "/" + species.Slug,
 	}
 }
 
-func SerializeSpp(species []models.Species) []SerializedSpecies {
-	serializedSpp := make([]SerializedSpecies, 0)
+func SerializeSpp(species []models.Species) []SpeciesStub {
+	stubs := make([]SpeciesStub, 0)
 	for _, sp := range species {
-		serializedSpp = append(serializedSpp, SerializeSpecies(sp))
+		stubs = append(stubs, StubSpecies(sp))
 	}
-	return serializedSpp
+	return stubs
 }
