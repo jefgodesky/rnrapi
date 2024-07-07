@@ -7,14 +7,14 @@ import (
 )
 
 type SerializedSpecies struct {
-	Name        string                       `json:"name"`
-	Slug        string                       `json:"slug"`
-	Description string                       `json:"description"`
-	Affinities  enums.AbilityPair            `json:"affinities"`
-	Aversion    enums.Ability                `json:"aversion"`
-	Stages      json.RawMessage              `json:"stages"`
-	Public      bool                         `json:"public"`
-	World       SerializedWorldSansCampaigns `json:"world"`
+	Name        string                     `json:"name"`
+	Slug        string                     `json:"slug"`
+	Description string                     `json:"description"`
+	Affinities  enums.AbilityPair          `json:"affinities"`
+	Aversion    enums.Ability              `json:"aversion"`
+	Stages      json.RawMessage            `json:"stages"`
+	Public      bool                       `json:"public"`
+	World       SerializedWorldSansSpecies `json:"world"`
 }
 
 type SerializedSpeciesSansWorld struct {
@@ -28,8 +28,7 @@ type SerializedSpeciesSansWorld struct {
 }
 
 func SerializeSpecies(species models.Species) SerializedSpecies {
-	world := SerializeWorldSansCampaigns(species.World)
-
+	world := SerializeWorldSansSpecies(species.World)
 	return SerializedSpecies{
 		Name:        species.Name,
 		Slug:        species.Slug,
@@ -37,8 +36,20 @@ func SerializeSpecies(species models.Species) SerializedSpecies {
 		Affinities:  species.Affinities,
 		Aversion:    species.Aversion,
 		Stages:      species.Stages,
-		Public:      world.Public,
+		Public:      species.Public,
 		World:       world,
+	}
+}
+
+func SerializeSpeciesSansWorld(species models.Species) SerializedSpeciesSansWorld {
+	return SerializedSpeciesSansWorld{
+		Name:        species.Name,
+		Slug:        species.Slug,
+		Description: species.Description,
+		Affinities:  species.Affinities,
+		Aversion:    species.Aversion,
+		Stages:      species.Stages,
+		Public:      species.Public,
 	}
 }
 

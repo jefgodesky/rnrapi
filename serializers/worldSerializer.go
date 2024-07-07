@@ -10,14 +10,24 @@ type SerializedWorld struct {
 	Slug      string                        `json:"slug"`
 	Public    bool                          `json:"public"`
 	Creators  []string                      `json:"creators"`
+	Species   []SerializedSpeciesSansWorld  `json:"species"`
 	Campaigns []SerializedCampaignSansWorld `json:"campaigns"`
 }
 
 type SerializedWorldSansCampaigns struct {
-	Name     string   `json:"name"`
-	Slug     string   `json:"slug"`
-	Public   bool     `json:"public"`
-	Creators []string `json:"creators"`
+	Name     string                       `json:"name"`
+	Slug     string                       `json:"slug"`
+	Public   bool                         `json:"public"`
+	Creators []string                     `json:"creators"`
+	Species  []SerializedSpeciesSansWorld `json:"species"`
+}
+
+type SerializedWorldSansSpecies struct {
+	Name      string                        `json:"name"`
+	Slug      string                        `json:"slug"`
+	Public    bool                          `json:"public"`
+	Creators  []string                      `json:"creators"`
+	Campaigns []SerializedCampaignSansWorld `json:"campaigns"`
 }
 
 func SerializeWorld(world models.World) SerializedWorld {
@@ -34,11 +44,20 @@ func SerializeWorld(world models.World) SerializedWorld {
 		serializedCampaigns[i] = SerializeCampaignSansWorld(campaign)
 	}
 
+	var species []models.Species
+	initializers.DB.Where("world_id = ?", world.ID).Find(&species)
+
+	serializedSpecies := make([]SerializedSpeciesSansWorld, len(species))
+	for i, sp := range species {
+		serializedSpecies[i] = SerializeSpeciesSansWorld(sp)
+	}
+
 	return SerializedWorld{
 		Name:      world.Name,
 		Slug:      world.Slug,
 		Public:    world.Public,
 		Creators:  creators,
+		Species:   serializedSpecies,
 		Campaigns: serializedCampaigns,
 	}
 }
@@ -50,6 +69,18 @@ func SerializeWorldSansCampaigns(world models.World) SerializedWorldSansCampaign
 		Slug:     serialized.Slug,
 		Public:   serialized.Public,
 		Creators: serialized.Creators,
+		Species:  serialized.Species,
+	}
+}
+
+func SerializeWorldSansSpecies(world models.World) SerializedWorldSansSpecies {
+	serialized := SerializeWorld(world)
+	return SerializedWorldSansSpecies{
+		Name:      serialized.Name,
+		Slug:      serialized.Slug,
+		Public:    serialized.Public,
+		Creators:  serialized.Creators,
+		Campaigns: serialized.Campaigns,
 	}
 }
 
