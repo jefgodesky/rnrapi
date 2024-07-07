@@ -6,6 +6,7 @@ import (
 	"github.com/jefgodesky/rnrapi/initializers"
 	"github.com/jefgodesky/rnrapi/models"
 	"github.com/jefgodesky/rnrapi/serializers"
+	"gorm.io/gorm/clause"
 )
 
 func CharacterCreate(c *gin.Context) {
@@ -25,18 +26,24 @@ func CharacterCreate(c *gin.Context) {
 func CharacterIndex(c *gin.Context) {
 	var characters []models.Character
 	user := helpers.GetUserFromContext(c, false)
+	query := initializers.DB.
+		Model(&models.Character{}).
+		Preload(clause.Associations)
 
 	if user != nil {
-		initializers.DB.
-			Where("public = ? OR player_id = ?", true, user.ID).
-			Find(&characters)
+		query.Where("public = ? OR player_id = ?", true, user.ID)
 	} else {
-		initializers.DB.
-			Where("public = ?", true).
-			Find(&characters)
+		query.Where("public = ?", true)
 	}
 
+	var total int64
+	query.Count(&total)
+	query.Scopes(helpers.Paginate(c)).Find(&characters)
+
 	c.JSON(200, gin.H{
+		"total":      total,
+		"page":       c.GetInt("page"),
+		"page_size":  c.GetInt("page_size"),
 		"characters": serializers.SerializeCharacters(characters),
 	})
 }
