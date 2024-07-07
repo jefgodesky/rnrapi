@@ -230,3 +230,62 @@ func BodyToSociety(c *gin.Context) *models.Society {
 
 	return &society
 }
+
+func BodyToCharacter(c *gin.Context) *models.Character {
+	type AbilitiesBody struct {
+		Strength     int `json:"strength"`
+		Dexterity    int `json:"dexterity"`
+		Constitution int `json:"constitution"`
+		Intelligence int `json:"intelligence"`
+		Wisdom       int `json:"wisdom"`
+		Charisma     int `json:"charisma"`
+	}
+
+	var body struct {
+		Name        string        `json:"name"`
+		Description string        `json:"description"`
+		Abilities   AbilitiesBody `json:"abilities"`
+		Notes       []string      `json:"notes"`
+		Public      *bool         `json:"public"`
+		Player      string        `json:"player"`
+	}
+
+	if err := c.Bind(&body); err != nil {
+		c.JSON(400, gin.H{"error": "Invalid input"})
+		c.Abort()
+		return nil
+	}
+
+	isPublic := true
+	if body.Public != nil {
+		isPublic = *body.Public
+	}
+
+	player := GetUser(c, body.Player)
+	if player == nil {
+		player = GetUserFromContext(c, true)
+	}
+
+	notesJSON, err := json.Marshal(body.Notes)
+	if err != nil {
+		c.JSON(500, gin.H{"error": "Failed to marshal notes"})
+		return nil
+	}
+
+	char := models.Character{
+		Name:        body.Name,
+		Description: body.Description,
+		Str:         body.Abilities.Strength,
+		Dex:         body.Abilities.Dexterity,
+		Con:         body.Abilities.Constitution,
+		Int:         body.Abilities.Intelligence,
+		Wis:         body.Abilities.Wisdom,
+		Cha:         body.Abilities.Charisma,
+		Notes:       notesJSON,
+		Public:      isPublic,
+		PlayerID:    player.ID,
+		Player:      *player,
+	}
+
+	return &char
+}

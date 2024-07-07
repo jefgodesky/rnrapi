@@ -32,6 +32,7 @@ func MigrateDB() error {
 		&models.Campaign{},
 		&models.Species{},
 		&models.Society{},
+		&models.Character{},
 	)
 
 	if err != nil {

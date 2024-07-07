@@ -43,6 +43,8 @@ func main() {
 			authRequired.POST("/societies", controllers.SocietyCreate)
 			authRequired.PUT("/societies/:world/:slug", controllers.SocietyUpdate)
 			authRequired.DELETE("/societies/:world/:slug", controllers.SocietyDestroy)
+
+			authRequired.POST("/characters", controllers.CharacterCreate)
 		}
 
 		authOptional := v.Group("/")
