@@ -47,6 +47,8 @@ func main() {
 
 			authOptional.GET("/campaigns", controllers.CampaignIndex)
 			authOptional.GET("/campaigns/:world/:slug", controllers.CampaignRetrieve)
+
+			authOptional.GET("/species", controllers.SpeciesIndex)
 		}
 	}
 

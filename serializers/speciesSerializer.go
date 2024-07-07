@@ -37,3 +37,11 @@ func SerializeSpecies(species models.Species) SerializedSpecies {
 		World:       world,
 	}
 }
+
+func SerializeSpp(species []models.Species) []SerializedSpecies {
+	serializedSpp := make([]SerializedSpecies, 0)
+	for _, sp := range species {
+		serializedSpp = append(serializedSpp, SerializeSpecies(sp))
+	}
+	return serializedSpp
+}

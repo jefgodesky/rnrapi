@@ -5,7 +5,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jefgodesky/rnrapi/helpers"
 	"github.com/jefgodesky/rnrapi/initializers"
+	"github.com/jefgodesky/rnrapi/models"
 	"github.com/jefgodesky/rnrapi/serializers"
+	"gorm.io/gorm/clause"
 )
 
 func SpeciesCreate(c *gin.Context) {
@@ -18,4 +20,15 @@ func SpeciesCreate(c *gin.Context) {
 	}
 
 	c.JSON(200, serializers.SerializeSpecies(*species))
+}
+
+func SpeciesIndex(c *gin.Context) {
+	var species []models.Species
+	initializers.DB.Preload(clause.Associations).Find(&species)
+
+	user := helpers.GetUserFromContext(c, false)
+	filtered := helpers.FilterSpeciesWorldAccess(species, user)
+	c.JSON(200, gin.H{
+		"species": serializers.SerializeSpp(filtered),
+	})
 }

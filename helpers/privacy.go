@@ -3,6 +3,7 @@ package helpers
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/jefgodesky/rnrapi/models"
+	"reflect"
 )
 
 func IsWorldCreator(world *models.World, user *models.User) bool {
@@ -51,14 +52,37 @@ func WorldCreatorOnly(c *gin.Context) *models.World {
 	return world
 }
 
-func FilterCampaignWorldAccess(campaigns []models.Campaign, user *models.User) []models.Campaign {
-	var filtered []models.Campaign
-	for _, campaign := range campaigns {
-		if HasWorldAccess(&campaign.World, user) {
-			filtered = append(filtered, campaign)
+func filterWorldAccess(items interface{}, user *models.User) interface{} {
+	itemsVal := reflect.ValueOf(items)
+	if itemsVal.Kind() != reflect.Slice {
+		panic("filterWorldAccess: items is not slice")
+	}
+
+	itemType := itemsVal.Type().Elem()
+	filteredItems := reflect.MakeSlice(reflect.SliceOf(itemType), 0, itemsVal.Len())
+
+	for i := 0; i < itemsVal.Len(); i++ {
+		item := itemsVal.Index(i)
+		worldField := item.FieldByName("World")
+		if !worldField.IsValid() {
+			panic("filterWorldAccess: No World found")
+		}
+
+		world, ok := worldField.Addr().Interface().(*models.World)
+		if !ok {
+			panic("filterWorldAccess: World is not of type *models.World")
+		}
+
+		if HasWorldAccess(world, user) {
+			filteredItems = reflect.Append(filteredItems, item)
 		}
 	}
-	return filtered
+
+	return filteredItems.Interface()
+}
+
+func FilterCampaignWorldAccess(campaigns []models.Campaign, user *models.User) []models.Campaign {
+	return filterWorldAccess(campaigns, user).([]models.Campaign)
 }
 
 func IsCampaignGM(campaign *models.Campaign, user *models.User) bool {
@@ -108,4 +132,8 @@ func CampaignGMOnly(c *gin.Context) *models.Campaign {
 	}
 
 	return campaign
+}
+
+func FilterSpeciesWorldAccess(species []models.Species, user *models.User) []models.Species {
+	return filterWorldAccess(species, user).([]models.Species)
 }
