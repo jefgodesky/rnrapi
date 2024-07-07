@@ -296,6 +296,7 @@ func BodyToCharacter(c *gin.Context) *models.Character {
 		c.JSON(500, gin.H{"error": "Failed to marshal notes"})
 		return nil
 	}
+	notesField := models.JSONField(notesJSON)
 
 	char := models.Character{
 		Name:        body.Name,
@@ -306,7 +307,7 @@ func BodyToCharacter(c *gin.Context) *models.Character {
 		Int:         body.Abilities.Intelligence,
 		Wis:         body.Abilities.Wisdom,
 		Cha:         body.Abilities.Charisma,
-		Notes:       notesJSON,
+		Notes:       notesField,
 		PC:          body.PC,
 		Public:      isPublic,
 		PlayerID:    player.ID,
