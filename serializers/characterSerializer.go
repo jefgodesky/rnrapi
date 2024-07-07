@@ -31,6 +31,11 @@ type SerializedCharacter struct {
 	Player      string                `json:"player"`
 }
 
+type CharacterStub struct {
+	Name string `json:"name"`
+	Path string `json:"path"`
+}
+
 func SerializeCharacter(char models.Character) SerializedCharacter {
 	abilities := SerializedAbilities{
 		Str: char.Str,
@@ -64,10 +69,17 @@ func SerializeCharacter(char models.Character) SerializedCharacter {
 	}
 }
 
-func SerializeCharacters(chars []models.Character) []SerializedCharacter {
-	serializedChars := make([]SerializedCharacter, 0)
-	for _, char := range chars {
-		serializedChars = append(serializedChars, SerializeCharacter(char))
+func StubCharacter(char models.Character) CharacterStub {
+	return CharacterStub{
+		Name: char.Name,
+		Path: "/characters/" + char.ID,
 	}
-	return serializedChars
+}
+
+func SerializeCharacters(chars []models.Character) []CharacterStub {
+	stubs := make([]CharacterStub, 0)
+	for _, char := range chars {
+		stubs = append(stubs, StubCharacter(char))
+	}
+	return stubs
 }

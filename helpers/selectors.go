@@ -119,7 +119,7 @@ func GetUser(c *gin.Context, username string) *models.User {
 
 func GetCharacter(c *gin.Context, id string) *models.Character {
 	var char models.Character
-	result := initializers.DB.Where("id = ?", id).First(&char)
+	result := initializers.DB.Preload("Player").Where("id = ?", id).First(&char)
 
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
