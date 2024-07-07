@@ -46,3 +46,27 @@ func SocietyRetrieve(c *gin.Context) {
 
 	c.JSON(200, serializers.SerializeSociety(*society))
 }
+
+func SocietyUpdate(c *gin.Context) {
+	society := helpers.SocietyCreatorOnly(c)
+	if society == nil {
+		return
+	}
+
+	newSociety := helpers.BodyToSociety(c)
+	society.Slug = newSociety.Slug
+	society.Name = newSociety.Name
+	society.Description = newSociety.Description
+	society.Favored = newSociety.Favored
+	society.Languages = newSociety.Languages
+	society.Public = newSociety.Public
+	society.WorldID = newSociety.WorldID
+	society.World = newSociety.World
+
+	if err := initializers.DB.Save(society).Error; err != nil {
+		c.JSON(500, gin.H{"Error": "Failed to update society"})
+		return
+	}
+
+	c.JSON(200, serializers.SerializeSociety(*society))
+}

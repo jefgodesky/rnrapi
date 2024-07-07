@@ -153,6 +153,25 @@ func SpeciesCreatorOnly(c *gin.Context) *models.Species {
 	return species
 }
 
+func SocietyCreatorOnly(c *gin.Context) *models.Society {
+	society := GetSocietyFromSlug(c)
+	if society == nil {
+		return nil
+	}
+
+	user := GetUserFromContext(c, true)
+	if user == nil {
+		return nil
+	}
+
+	if !IsWorldCreator(&society.World, user) {
+		c.JSON(403, gin.H{"error": "Forbidden"})
+		return nil
+	}
+
+	return society
+}
+
 func FilterSpeciesWorldAccess(species []models.Species, user *models.User) []models.Species {
 	worldAccess := filterWorldAccess(species, user).([]models.Species)
 	filtered := make([]models.Species, 0)
