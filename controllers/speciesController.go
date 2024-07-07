@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/jefgodesky/rnrapi/helpers"
 	"github.com/jefgodesky/rnrapi/initializers"
@@ -16,7 +15,6 @@ func SpeciesCreate(c *gin.Context) {
 		return
 	}
 
-	fmt.Println(species)
 	if result := initializers.DB.Create(&species); result.Error != nil {
 		c.JSON(500, gin.H{"error": "Failed to create species"})
 		return

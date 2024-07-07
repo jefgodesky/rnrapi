@@ -31,6 +31,7 @@ func MigrateDB() error {
 		&models.World{},
 		&models.Campaign{},
 		&models.Species{},
+		&models.Society{},
 	)
 
 	if err != nil {
@@ -39,6 +40,7 @@ func MigrateDB() error {
 
 	createUniqueIndex("idx_campaign_world_slug", "campaigns", "world_id, slug")
 	createUniqueIndex("idx_species_world_slug", "species", "world_id, slug")
+	createUniqueIndex("idx_society_world_slug", "societies", "world_id, slug")
 
 	return nil
 }
