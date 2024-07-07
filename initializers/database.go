@@ -30,16 +30,29 @@ func MigrateDB() error {
 		&models.User{},
 		&models.World{},
 		&models.Campaign{},
+		&models.Species{},
 	)
 
 	if err != nil {
 		return err
 	}
 
-	err = DB.Exec("CREATE UNIQUE INDEX idx_campaign_world_slug ON campaigns (world_id, slug)").Error
-	if err != nil {
-		return err
-	}
+	createUniqueIndex("idx_campaign_world_slug", "campaigns", "world_id, slug")
+	createUniqueIndex("idx_species_world_slug", "species", "world_id, slug")
 
+	return nil
+}
+
+func createUniqueIndex(indexName, tableName, columns string) error {
+	var exists bool
+	query := "SELECT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = ?)"
+	DB.Raw(query, indexName).Scan(&exists)
+	if !exists {
+		createIndexQuery := "CREATE UNIQUE INDEX " + indexName + " ON " + tableName + " (" + columns + ")"
+		err := DB.Exec(createIndexQuery).Error
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }

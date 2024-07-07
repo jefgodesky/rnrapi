@@ -35,6 +35,8 @@ func main() {
 			authRequired.POST("/campaigns", controllers.CampaignCreate)
 			authRequired.PUT("/campaigns/:world/:slug", controllers.CampaignUpdate)
 			authRequired.DELETE("/campaigns/:world/:slug", controllers.CampaignDestroy)
+
+			authRequired.POST("/species", controllers.SpeciesCreate)
 		}
 
 		authOptional := v.Group("/")
