@@ -23,22 +23,27 @@ func CampaignCreate(c *gin.Context) {
 func CampaignIndex(c *gin.Context) {
 	var campaigns []models.Campaign
 	user := helpers.GetUserFromContext(c, false)
+	query := initializers.DB.
+		Model(&models.Campaign{}).
+		Preload(clause.Associations)
 
 	if user != nil {
-		initializers.DB.
-			Preload(clause.Associations).
-			Where("public = ? OR id in (SELECT campaign_id FROM campaign_gms WHERE user_id = ?)", true, user.ID).
-			Find(&campaigns)
+		query.Joins("JOIN worlds ON worlds.id = campaigns.world_id").
+			Where("(campaigns.public = ? AND worlds.public = ?) OR campaigns.id IN (SELECT campaign_id FROM campaign_gms WHERE user_id = ?)", true, true, user.ID)
 	} else {
-		initializers.DB.
-			Preload(clause.Associations).
-			Where("Public = ?", true).
-			Find(&campaigns)
+		query.Joins("JOIN worlds ON worlds.id = campaigns.world_id").
+			Where("campaigns.public = ? AND worlds.public = ?", true, true)
 	}
 
-	filtered := helpers.FilterCampaignWorldAccess(campaigns, user)
+	var total int64
+	query.Count(&total)
+	query.Scopes(helpers.Paginate(c)).Find(&campaigns)
+
 	c.JSON(200, gin.H{
-		"campaigns": serializers.SerializeCampaigns(filtered),
+		"total":     total,
+		"page":      c.GetInt("page"),
+		"page_size": c.GetInt("page_size"),
+		"worlds":    serializers.SerializeCampaigns(campaigns),
 	})
 }
 
