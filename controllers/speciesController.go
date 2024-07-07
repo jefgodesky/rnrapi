@@ -12,9 +12,12 @@ import (
 
 func SpeciesCreate(c *gin.Context) {
 	species := helpers.BodyToSpecies(c)
+	if species == nil {
+		return
+	}
 
+	fmt.Println(species)
 	if result := initializers.DB.Create(&species); result.Error != nil {
-		fmt.Println(result.Error)
 		c.JSON(500, gin.H{"error": "Failed to create species"})
 		return
 	}
@@ -58,6 +61,7 @@ func SpeciesUpdate(c *gin.Context) {
 	species.Description = newSpecies.Description
 	species.Affinities = newSpecies.Affinities
 	species.Aversion = newSpecies.Aversion
+	species.Stages = newSpecies.Stages
 	species.Public = newSpecies.Public
 	species.WorldID = newSpecies.WorldID
 	species.World = newSpecies.World

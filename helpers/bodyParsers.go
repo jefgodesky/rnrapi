@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/gosimple/slug"
 	"github.com/jefgodesky/rnrapi/enums"
@@ -139,12 +140,14 @@ func BodyToSpecies(c *gin.Context) *models.Species {
 		Description string           `json:"description"`
 		Affinities  [2]enums.Ability `json:"affinities"`
 		Aversion    enums.Ability    `json:"aversion"`
+		Stages      json.RawMessage  `json:"stages"`
 		Public      *bool            `json:"public"`
 		World       string           `json:"world"`
 	}
 
 	if err := c.Bind(&body); err != nil {
 		c.JSON(400, gin.H{"error": "Invalid input"})
+		c.Abort()
 		return nil
 	}
 
@@ -161,6 +164,7 @@ func BodyToSpecies(c *gin.Context) *models.Species {
 	world := GetWorld(c, body.World)
 	if world == nil {
 		c.JSON(400, gin.H{"error": "World not found"})
+		c.Abort()
 		return nil
 	}
 
@@ -170,6 +174,7 @@ func BodyToSpecies(c *gin.Context) *models.Species {
 		Description: body.Description,
 		Affinities:  enums.AbilityPair{body.Affinities[0], body.Affinities[1]},
 		Aversion:    body.Aversion,
+		Stages:      body.Stages,
 		Public:      isPublic,
 		WorldID:     world.ID,
 		World:       *world,

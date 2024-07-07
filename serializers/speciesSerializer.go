@@ -1,6 +1,7 @@
 package serializers
 
 import (
+	"encoding/json"
 	"github.com/jefgodesky/rnrapi/enums"
 	"github.com/jefgodesky/rnrapi/models"
 )
@@ -11,6 +12,7 @@ type SerializedSpecies struct {
 	Description string                       `json:"description"`
 	Affinities  enums.AbilityPair            `json:"affinities"`
 	Aversion    enums.Ability                `json:"aversion"`
+	Stages      json.RawMessage              `json:"stages"`
 	Public      bool                         `json:"public"`
 	World       SerializedWorldSansCampaigns `json:"world"`
 }
@@ -21,6 +23,7 @@ type SerializedSpeciesSansWorld struct {
 	Description string            `json:"description"`
 	Affinities  enums.AbilityPair `json:"affinities"`
 	Aversion    enums.Ability     `json:"aversion"`
+	Stages      json.RawMessage   `json:"stages"`
 	Public      bool              `json:"public"`
 }
 
@@ -33,6 +36,7 @@ func SerializeSpecies(species models.Species) SerializedSpecies {
 		Description: species.Description,
 		Affinities:  species.Affinities,
 		Aversion:    species.Aversion,
+		Stages:      species.Stages,
 		Public:      world.Public,
 		World:       world,
 	}
