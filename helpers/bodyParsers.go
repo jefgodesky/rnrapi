@@ -286,9 +286,9 @@ func BodyToCharacter(c *gin.Context) *models.Character {
 		isPublic = *body.Public
 	}
 
-	player := GetUser(c, body.Player)
+	player := GetUser(c, body.Player, false)
 	if player == nil {
-		player = GetUserFromContext(c, true)
+		player = GetUserFromContext(c, false)
 	}
 
 	notesJSON, err := json.Marshal(body.Notes)

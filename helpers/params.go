@@ -30,7 +30,7 @@ func GetSocietyFromSlug(c *gin.Context) *models.Society {
 
 func GetUserFromSlug(c *gin.Context) *models.User {
 	username := c.Param("username")
-	return GetUser(c, username)
+	return GetUser(c, username, true)
 }
 
 func GetCharacterFromSlug(c *gin.Context) *models.Character {
