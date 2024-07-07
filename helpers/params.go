@@ -15,3 +15,9 @@ func GetCampaignFromSlug(c *gin.Context) *models.Campaign {
 	slug := c.Param("slug")
 	return GetCampaign(c, world, slug)
 }
+
+func GetSpeciesFromSlug(c *gin.Context) *models.Species {
+	world := c.Param("world")
+	slug := c.Param("slug")
+	return GetSpecies(c, world, slug)
+}

@@ -13,6 +13,7 @@ import (
 var PreloadPaths = map[string][]string{
 	"World":    {"Creators"},
 	"Campaign": {"GMs", "World", "World.Creators"},
+	"Species":  {"World", "World.Creators"},
 }
 
 func GetInstance(c *gin.Context, model interface{}, slug string, conditions map[string]interface{}) bool {
@@ -67,4 +68,19 @@ func GetCampaign(c *gin.Context, world string, slug string) *models.Campaign {
 		return nil
 	}
 	return &campaign
+}
+
+func GetSpecies(c *gin.Context, world string, slug string) *models.Species {
+	w := GetWorld(c, world)
+	if w == nil {
+		return nil
+	}
+
+	var species models.Species
+	if !GetInstance(c, &species, slug, map[string]interface{}{
+		"world_id": w.ID,
+	}) {
+		return nil
+	}
+	return &species
 }

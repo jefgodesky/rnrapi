@@ -32,3 +32,16 @@ func SpeciesIndex(c *gin.Context) {
 		"species": serializers.SerializeSpp(filtered),
 	})
 }
+
+func SpeciesRetrieve(c *gin.Context) {
+	species := helpers.GetSpeciesFromSlug(c)
+	user := helpers.GetUserFromContext(c, false)
+	allowed := helpers.HasWorldAccess(&species.World, user)
+
+	if !allowed {
+		c.JSON(403, gin.H{"error": "Forbidden"})
+		return
+	}
+
+	c.JSON(200, serializers.SerializeSpecies(*species))
+}
