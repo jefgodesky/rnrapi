@@ -55,3 +55,31 @@ func CharacterRetrieve(c *gin.Context) {
 
 	c.JSON(200, serializers.SerializeCharacter(*char))
 }
+
+func CharacterUpdate(c *gin.Context) {
+	char := helpers.CharacterPlayerOnly(c)
+	if char == nil {
+		return
+	}
+
+	newChar := helpers.BodyToCharacter(c)
+	char.Name = newChar.Name
+	char.Description = newChar.Description
+	char.Str = newChar.Str
+	char.Dex = newChar.Dex
+	char.Con = newChar.Con
+	char.Int = newChar.Int
+	char.Wis = newChar.Wis
+	char.Cha = newChar.Cha
+	char.Notes = newChar.Notes
+	char.Public = newChar.Public
+	char.PlayerID = newChar.PlayerID
+	char.Player = newChar.Player
+
+	if err := initializers.DB.Save(char).Error; err != nil {
+		c.JSON(500, gin.H{"Error": "Failed to update character"})
+		return
+	}
+
+	c.JSON(200, serializers.SerializeCharacter(*char))
+}

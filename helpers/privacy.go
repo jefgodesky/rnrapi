@@ -52,6 +52,25 @@ func WorldCreatorOnly(c *gin.Context) *models.World {
 	return world
 }
 
+func CharacterPlayerOnly(c *gin.Context) *models.Character {
+	char := GetCharacterFromSlug(c)
+	if char == nil {
+		return nil
+	}
+
+	user := GetUserFromContext(c, true)
+	if user == nil {
+		return nil
+	}
+
+	if char.PlayerID != user.ID {
+		c.JSON(403, gin.H{"error": "Forbidden"})
+		return nil
+	}
+
+	return char
+}
+
 func filterWorldAccess(items interface{}, user *models.User) interface{} {
 	itemsVal := reflect.ValueOf(items)
 	if itemsVal.Kind() != reflect.Slice {
