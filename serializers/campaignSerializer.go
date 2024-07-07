@@ -34,12 +34,16 @@ func SerializeCampaign(campaign models.Campaign) SerializedCampaign {
 	}
 }
 
-func StubCampaign(campaign models.Campaign) CampaignStub {
+func StubCampaignWithWorld(campaign models.Campaign, world string) CampaignStub {
 	serialized := SerializeCampaign(campaign)
 	return CampaignStub{
 		Name: serialized.Name,
-		Path: "/campaigns/" + campaign.World.Slug + "/" + campaign.Slug,
+		Path: "/campaigns/" + world + "/" + campaign.Slug,
 	}
+}
+
+func StubCampaign(campaign models.Campaign) CampaignStub {
+	return StubCampaignWithWorld(campaign, campaign.World.Slug)
 }
 
 func SerializeCampaigns(campaigns []models.Campaign) []CampaignStub {

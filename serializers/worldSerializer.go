@@ -31,7 +31,7 @@ func SerializeWorld(world models.World) SerializedWorld {
 
 	serializedCampaigns := make([]CampaignStub, len(campaigns))
 	for i, campaign := range campaigns {
-		serializedCampaigns[i] = StubCampaign(campaign)
+		serializedCampaigns[i] = StubCampaignWithWorld(campaign, world.Slug)
 	}
 
 	var species []models.Species
@@ -39,7 +39,7 @@ func SerializeWorld(world models.World) SerializedWorld {
 
 	serializedSpecies := make([]SpeciesStub, len(species))
 	for i, sp := range species {
-		serializedSpecies[i] = StubSpecies(sp)
+		serializedSpecies[i] = StubSpeciesWithWorld(sp, world.Slug)
 	}
 
 	var societies []models.Society

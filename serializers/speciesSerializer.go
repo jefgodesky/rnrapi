@@ -36,11 +36,15 @@ func SerializeSpecies(species models.Species) SerializedSpecies {
 	}
 }
 
-func StubSpecies(species models.Species) SpeciesStub {
+func StubSpeciesWithWorld(species models.Species, world string) SpeciesStub {
 	return SpeciesStub{
 		Name: species.Name,
-		Path: "/species/" + species.World.Slug + "/" + species.Slug,
+		Path: "/species/" + world + "/" + species.Slug,
 	}
+}
+
+func StubSpecies(species models.Species) SpeciesStub {
+	return StubSpeciesWithWorld(species, species.World.Slug)
 }
 
 func SerializeSpp(species []models.Species) []SpeciesStub {
