@@ -154,5 +154,12 @@ func SpeciesCreatorOnly(c *gin.Context) *models.Species {
 }
 
 func FilterSpeciesWorldAccess(species []models.Species, user *models.User) []models.Species {
-	return filterWorldAccess(species, user).([]models.Species)
+	worldAccess := filterWorldAccess(species, user).([]models.Species)
+	filtered := make([]models.Species, 0)
+	for _, sp := range worldAccess {
+		if sp.Public || IsWorldCreator(&sp.World, user) {
+			filtered = append(filtered, sp)
+		}
+	}
+	return filtered
 }
