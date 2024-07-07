@@ -1,14 +1,17 @@
 package serializers
 
-import "github.com/jefgodesky/rnrapi/models"
+import (
+	"github.com/jefgodesky/rnrapi/models"
+)
 
 type SerializedCampaign struct {
-	Name        string    `json:"name"`
-	Slug        string    `json:"slug"`
-	Description string    `json:"description"`
-	GMs         []string  `json:"gms"`
-	Public      bool      `json:"public"`
-	World       WorldStub `json:"world"`
+	Name        string          `json:"name"`
+	Slug        string          `json:"slug"`
+	Description string          `json:"description"`
+	GMs         []string        `json:"gms"`
+	PCs         []CharacterStub `json:"pcs"`
+	Public      bool            `json:"public"`
+	World       WorldStub       `json:"world"`
 }
 
 type CampaignStub struct {
@@ -22,6 +25,11 @@ func SerializeCampaign(campaign models.Campaign) SerializedCampaign {
 		gms = append(gms, gm.Username)
 	}
 
+	var pcs []CharacterStub
+	for _, pc := range campaign.PCs {
+		pcs = append(pcs, StubCharacter(pc))
+	}
+
 	world := StubWorld(campaign.World)
 
 	return SerializedCampaign{
@@ -29,6 +37,7 @@ func SerializeCampaign(campaign models.Campaign) SerializedCampaign {
 		Slug:        campaign.Slug,
 		Description: campaign.Description,
 		GMs:         gms,
+		PCs:         pcs,
 		Public:      campaign.Public,
 		World:       world,
 	}

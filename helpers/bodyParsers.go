@@ -9,6 +9,40 @@ import (
 	"github.com/jefgodesky/rnrapi/models"
 )
 
+func UsernamesToUsers(usernames []string) []models.User {
+	var users []models.User
+	for _, username := range usernames {
+		var user models.User
+		result := initializers.DB.
+			Where("username = ? AND active = ?", username, true).
+			First(&user)
+		if result.Error == nil {
+			users = append(users, user)
+		}
+	}
+	return users
+}
+
+func UsernamesToUsersWithDefault(usernames []string, defaultUser models.User) []models.User {
+	users := UsernamesToUsers(usernames)
+	if len(users) == 0 {
+		users = append(users, defaultUser)
+	}
+	return users
+}
+
+func IdsToCharacters(ids []string) []models.Character {
+	var characters []models.Character
+	for _, id := range ids {
+		var char models.Character
+		result := initializers.DB.First(&char, "id = ?", id)
+		if result.Error == nil {
+			characters = append(characters, char)
+		}
+	}
+	return characters
+}
+
 func BodyToUserFields(c *gin.Context) (string, string, string) {
 	var body struct {
 		Username string
@@ -78,7 +112,8 @@ func BodyToCampaign(c *gin.Context) *models.Campaign {
 		Slug        string   `json:"slug"`
 		Name        string   `json:"name"`
 		Description string   `json:"description"`
-		GMs         []string `json:"creators"`
+		GMs         []string `json:"gms"`
+		PCs         []string `json:"pcs"`
 		Public      *bool    `json:"public"`
 		World       string   `json:"world"`
 	}
@@ -104,27 +139,16 @@ func BodyToCampaign(c *gin.Context) *models.Campaign {
 		return nil
 	}
 
-	var gms []models.User
-	for _, gm := range body.GMs {
-		var user models.User
-		result := initializers.DB.
-			Where("username = ? AND active = ?", gm, true).
-			First(&user)
-		if result.Error == nil {
-			gms = append(gms, user)
-		}
-	}
-
-	if len(gms) == 0 {
-		authUser := GetUserFromContext(c, true)
-		gms = append(gms, *authUser)
-	}
+	authUser := GetUserFromContext(c, true)
+	gms := UsernamesToUsersWithDefault(body.GMs, *authUser)
+	pcs := IdsToCharacters(body.PCs)
 
 	campaign := models.Campaign{
 		Slug:        campaignSlug,
 		Name:        body.Name,
 		Description: body.Description,
 		GMs:         gms,
+		PCs:         pcs,
 		Public:      isPublic,
 		WorldID:     world.ID,
 		World:       *world,

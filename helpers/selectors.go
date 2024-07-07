@@ -7,12 +7,13 @@ import (
 	"github.com/jefgodesky/rnrapi/initializers"
 	"github.com/jefgodesky/rnrapi/models"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"reflect"
 )
 
 var PreloadPaths = map[string][]string{
 	"World":    {"Creators"},
-	"Campaign": {"GMs", "World", "World.Creators"},
+	"Campaign": {"GMs", "PCs", "World", "World.Creators"},
 	"Species":  {"World", "World.Creators"},
 	"Society":  {"World", "World.Creators"},
 }
@@ -119,7 +120,7 @@ func GetUser(c *gin.Context, username string) *models.User {
 
 func GetCharacter(c *gin.Context, id string) *models.Character {
 	var char models.Character
-	result := initializers.DB.Preload("Player").Where("id = ?", id).First(&char)
+	result := initializers.DB.Preload(clause.Associations).Where("id = ?", id).First(&char)
 
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {

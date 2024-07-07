@@ -2,7 +2,10 @@ package serializers
 
 import (
 	"encoding/json"
+	"fmt"
+	"github.com/jefgodesky/rnrapi/initializers"
 	"github.com/jefgodesky/rnrapi/models"
+	"gorm.io/gorm/clause"
 )
 
 type SerializedAbilities struct {
@@ -28,6 +31,7 @@ type SerializedCharacter struct {
 	Resistances SerializedResistances `json:"resistances"`
 	Notes       []string              `json:"notes"`
 	PC          bool                  `json:"pc"`
+	Campaigns   []CampaignStub        `json:"campaigns"`
 	Public      bool                  `json:"public"`
 	Player      string                `json:"player"`
 }
@@ -58,6 +62,22 @@ func SerializeCharacter(char models.Character) SerializedCharacter {
 		notes = []string{}
 	}
 
+	var campaigns []models.Campaign
+	err := initializers.DB.Joins("JOIN campaign_pcs ON campaign_pcs.campaign_id = campaigns.id").
+		Preload(clause.Associations).
+		Where("campaign_pcs.character_id = ?", char.ID).
+		Find(&campaigns).Error
+	if err != nil {
+		panic("Could not find character campaigns")
+	}
+
+	fmt.Println(campaigns)
+
+	var campaignStubs []CampaignStub
+	for _, campaign := range campaigns {
+		campaignStubs = append(campaignStubs, StubCampaign(campaign))
+	}
+
 	return SerializedCharacter{
 		ID:          char.ID,
 		Name:        char.Name,
@@ -66,6 +86,7 @@ func SerializeCharacter(char models.Character) SerializedCharacter {
 		Resistances: resistances,
 		Notes:       notes,
 		PC:          char.PC,
+		Campaigns:   campaignStubs,
 		Public:      char.Public,
 		Player:      char.Player.Username,
 	}
