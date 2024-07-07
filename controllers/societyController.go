@@ -70,3 +70,17 @@ func SocietyUpdate(c *gin.Context) {
 
 	c.JSON(200, serializers.SerializeSociety(*society))
 }
+
+func SocietyDestroy(c *gin.Context) {
+	society := helpers.SocietyCreatorOnly(c)
+	if society == nil {
+		return
+	}
+
+	if err := initializers.DB.Delete(&society).Error; err != nil {
+		c.JSON(500, gin.H{"Error": "Failed to destroy society"})
+		return
+	}
+
+	c.JSON(200, serializers.SerializeSociety(*society))
+}
