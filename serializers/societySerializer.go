@@ -6,13 +6,13 @@ import (
 )
 
 type SerializedSociety struct {
-	Name        string                       `json:"name"`
-	Slug        string                       `json:"slug"`
-	Description string                       `json:"description"`
-	Favored     enums.AbilityPair            `json:"favored"`
-	Languages   string                       `json:"languages"`
-	Public      bool                         `json:"public"`
-	World       SerializedWorldSansSocieties `json:"world"`
+	Name        string            `json:"name"`
+	Slug        string            `json:"slug"`
+	Description string            `json:"description"`
+	Favored     enums.AbilityPair `json:"favored"`
+	Languages   string            `json:"languages"`
+	Public      bool              `json:"public"`
+	World       WorldStub         `json:"world"`
 }
 
 type SerializedSocietySansWorld struct {
@@ -25,7 +25,7 @@ type SerializedSocietySansWorld struct {
 }
 
 func SerializeSociety(society models.Society) SerializedSociety {
-	world := SerializeWorldSansSocieties(society.World)
+	world := StubWorld(society.World)
 	return SerializedSociety{
 		Name:        society.Name,
 		Slug:        society.Slug,

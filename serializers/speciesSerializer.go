@@ -7,14 +7,14 @@ import (
 )
 
 type SerializedSpecies struct {
-	Name        string                     `json:"name"`
-	Slug        string                     `json:"slug"`
-	Description string                     `json:"description"`
-	Affinities  enums.AbilityPair          `json:"affinities"`
-	Aversion    enums.Ability              `json:"aversion"`
-	Stages      json.RawMessage            `json:"stages"`
-	Public      bool                       `json:"public"`
-	World       SerializedWorldSansSpecies `json:"world"`
+	Name        string            `json:"name"`
+	Slug        string            `json:"slug"`
+	Description string            `json:"description"`
+	Affinities  enums.AbilityPair `json:"affinities"`
+	Aversion    enums.Ability     `json:"aversion"`
+	Stages      json.RawMessage   `json:"stages"`
+	Public      bool              `json:"public"`
+	World       WorldStub         `json:"world"`
 }
 
 type SerializedSpeciesSansWorld struct {
@@ -28,7 +28,7 @@ type SerializedSpeciesSansWorld struct {
 }
 
 func SerializeSpecies(species models.Species) SerializedSpecies {
-	world := SerializeWorldSansSpecies(species.World)
+	world := StubWorld(species.World)
 	return SerializedSpecies{
 		Name:        species.Name,
 		Slug:        species.Slug,

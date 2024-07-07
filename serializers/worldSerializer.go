@@ -15,31 +15,9 @@ type SerializedWorld struct {
 	Campaigns []SerializedCampaignSansWorld `json:"campaigns"`
 }
 
-type SerializedWorldSansCampaigns struct {
-	Name      string                       `json:"name"`
-	Slug      string                       `json:"slug"`
-	Public    bool                         `json:"public"`
-	Creators  []string                     `json:"creators"`
-	Species   []SerializedSpeciesSansWorld `json:"species"`
-	Societies []SerializedSocietySansWorld `json:"societies"`
-}
-
-type SerializedWorldSansSpecies struct {
-	Name      string                        `json:"name"`
-	Slug      string                        `json:"slug"`
-	Public    bool                          `json:"public"`
-	Creators  []string                      `json:"creators"`
-	Societies []SerializedSocietySansWorld  `json:"societies"`
-	Campaigns []SerializedCampaignSansWorld `json:"campaigns"`
-}
-
-type SerializedWorldSansSocieties struct {
-	Name      string                        `json:"name"`
-	Slug      string                        `json:"slug"`
-	Public    bool                          `json:"public"`
-	Creators  []string                      `json:"creators"`
-	Species   []SerializedSpeciesSansWorld  `json:"species"`
-	Campaigns []SerializedCampaignSansWorld `json:"campaigns"`
+type WorldStub struct {
+	Name string `json:"name"`
+	Path string `json:"path"`
 }
 
 func SerializeWorld(world models.World) SerializedWorld {
@@ -83,46 +61,18 @@ func SerializeWorld(world models.World) SerializedWorld {
 	}
 }
 
-func SerializeWorldSansCampaigns(world models.World) SerializedWorldSansCampaigns {
+func StubWorld(world models.World) WorldStub {
 	serialized := SerializeWorld(world)
-	return SerializedWorldSansCampaigns{
-		Name:      serialized.Name,
-		Slug:      serialized.Slug,
-		Public:    serialized.Public,
-		Creators:  serialized.Creators,
-		Species:   serialized.Species,
-		Societies: serialized.Societies,
+	return WorldStub{
+		Name: serialized.Name,
+		Path: "/worlds/" + world.Slug,
 	}
 }
 
-func SerializeWorldSansSpecies(world models.World) SerializedWorldSansSpecies {
-	serialized := SerializeWorld(world)
-	return SerializedWorldSansSpecies{
-		Name:      serialized.Name,
-		Slug:      serialized.Slug,
-		Public:    serialized.Public,
-		Creators:  serialized.Creators,
-		Societies: serialized.Societies,
-		Campaigns: serialized.Campaigns,
-	}
-}
-
-func SerializeWorldSansSocieties(world models.World) SerializedWorldSansSocieties {
-	serialized := SerializeWorld(world)
-	return SerializedWorldSansSocieties{
-		Name:      serialized.Name,
-		Slug:      serialized.Slug,
-		Public:    serialized.Public,
-		Creators:  serialized.Creators,
-		Species:   serialized.Species,
-		Campaigns: serialized.Campaigns,
-	}
-}
-
-func SerializeWorlds(worlds []models.World) []SerializedWorld {
-	serializedWorlds := make([]SerializedWorld, 0)
+func SerializeWorlds(worlds []models.World) []WorldStub {
+	serializedWorlds := make([]WorldStub, 0)
 	for _, world := range worlds {
-		serializedWorlds = append(serializedWorlds, SerializeWorld(world))
+		serializedWorlds = append(serializedWorlds, StubWorld(world))
 	}
 	return serializedWorlds
 }

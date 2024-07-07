@@ -3,12 +3,12 @@ package serializers
 import "github.com/jefgodesky/rnrapi/models"
 
 type SerializedCampaign struct {
-	Name        string                       `json:"name"`
-	Slug        string                       `json:"slug"`
-	Description string                       `json:"description"`
-	GMs         []string                     `json:"gms"`
-	Public      bool                         `json:"public"`
-	World       SerializedWorldSansCampaigns `json:"world"`
+	Name        string    `json:"name"`
+	Slug        string    `json:"slug"`
+	Description string    `json:"description"`
+	GMs         []string  `json:"gms"`
+	Public      bool      `json:"public"`
+	World       WorldStub `json:"world"`
 }
 
 type SerializedCampaignSansWorld struct {
@@ -25,14 +25,14 @@ func SerializeCampaign(campaign models.Campaign) SerializedCampaign {
 		gms = append(gms, gm.Username)
 	}
 
-	world := SerializeWorldSansCampaigns(campaign.World)
+	world := StubWorld(campaign.World)
 
 	return SerializedCampaign{
 		Name:        campaign.Name,
 		Slug:        campaign.Slug,
 		Description: campaign.Description,
 		GMs:         gms,
-		Public:      world.Public,
+		Public:      campaign.Public,
 		World:       world,
 	}
 }
