@@ -45,3 +45,27 @@ func SpeciesRetrieve(c *gin.Context) {
 
 	c.JSON(200, serializers.SerializeSpecies(*species))
 }
+
+func SpeciesUpdate(c *gin.Context) {
+	species := helpers.SpeciesCreatorOnly(c)
+	if species == nil {
+		return
+	}
+
+	newSpecies := helpers.BodyToSpecies(c)
+	species.Slug = newSpecies.Slug
+	species.Name = newSpecies.Name
+	species.Description = newSpecies.Description
+	species.Affinities = newSpecies.Affinities
+	species.Aversion = newSpecies.Aversion
+	species.Public = newSpecies.Public
+	species.WorldID = newSpecies.WorldID
+	species.World = newSpecies.World
+
+	if err := initializers.DB.Save(species).Error; err != nil {
+		c.JSON(500, gin.H{"Error": "Failed to update species"})
+		return
+	}
+
+	c.JSON(200, serializers.SerializeSpecies(*species))
+}

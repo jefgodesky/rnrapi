@@ -134,6 +134,25 @@ func CampaignGMOnly(c *gin.Context) *models.Campaign {
 	return campaign
 }
 
+func SpeciesCreatorOnly(c *gin.Context) *models.Species {
+	species := GetSpeciesFromSlug(c)
+	if species == nil {
+		return nil
+	}
+
+	user := GetUserFromContext(c, true)
+	if user == nil {
+		return nil
+	}
+
+	if !IsWorldCreator(&species.World, user) {
+		c.JSON(403, gin.H{"error": "Forbidden"})
+		return nil
+	}
+
+	return species
+}
+
 func FilterSpeciesWorldAccess(species []models.Species, user *models.User) []models.Species {
 	return filterWorldAccess(species, user).([]models.Species)
 }
