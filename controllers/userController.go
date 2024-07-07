@@ -40,9 +40,15 @@ func UserCreate(c *gin.Context) {
 
 func UserIndex(c *gin.Context) {
 	var users []models.User
-	initializers.DB.Where("active = ?", true).Find(&users)
+	query := initializers.DB.Model(&models.User{}).Where("active = ?", true)
+	var total int64
+	query.Count(&total)
+	query.Scopes(helpers.Paginate(c)).Find(&users)
 	c.JSON(200, gin.H{
-		"users": serializers.SerializeUsers(users),
+		"total":     total,
+		"page":      c.GetInt("page"),
+		"page_size": c.GetInt("page_size"),
+		"users":     serializers.SerializeUsers(users),
 	})
 }
 
