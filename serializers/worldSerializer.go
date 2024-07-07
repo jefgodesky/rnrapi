@@ -6,13 +6,13 @@ import (
 )
 
 type SerializedWorld struct {
-	Name      string                       `json:"name"`
-	Slug      string                       `json:"slug"`
-	Public    bool                         `json:"public"`
-	Creators  []string                     `json:"creators"`
-	Species   []SpeciesStub                `json:"species"`
-	Societies []SerializedSocietySansWorld `json:"societies"`
-	Campaigns []CampaignStub               `json:"campaigns"`
+	Name      string         `json:"name"`
+	Slug      string         `json:"slug"`
+	Public    bool           `json:"public"`
+	Creators  []string       `json:"creators"`
+	Species   []SpeciesStub  `json:"species"`
+	Societies []SocietyStub  `json:"societies"`
+	Campaigns []CampaignStub `json:"campaigns"`
 }
 
 type WorldStub struct {
@@ -45,9 +45,9 @@ func SerializeWorld(world models.World) SerializedWorld {
 	var societies []models.Society
 	initializers.DB.Where("world_id = ?", world.ID).Find(&societies)
 
-	serializedSocieties := make([]SerializedSocietySansWorld, len(societies))
+	serializedSocieties := make([]SocietyStub, len(societies))
 	for i, society := range societies {
-		serializedSocieties[i] = SerializeSocietySansWorld(society)
+		serializedSocieties[i] = StubSocietyWithWorld(society, world.Slug)
 	}
 
 	return SerializedWorld{
