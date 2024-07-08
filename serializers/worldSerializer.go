@@ -21,11 +21,7 @@ type WorldStub struct {
 }
 
 func SerializeWorld(world models.World) SerializedWorld {
-	creators := make([]string, 0)
-	for _, creator := range world.Creators {
-		creators = append(creators, creator.Username)
-	}
-
+	creators := UsersToUsernames(world.Creators)
 	var campaigns []models.Campaign
 	initializers.DB.Where("world_id = ?", world.ID).Preload("GMs").Find(&campaigns)
 
