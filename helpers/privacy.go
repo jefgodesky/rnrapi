@@ -118,6 +118,25 @@ func ScrollWriterOnly(c *gin.Context) *models.Scroll {
 	return scroll
 }
 
+func TableAuthorOnly(c *gin.Context) *models.Table {
+	table := GetTableFromSlug(c)
+	if table == nil {
+		return nil
+	}
+
+	user := GetUserFromContext(c, true)
+	if user == nil {
+		return nil
+	}
+
+	if table.AuthorID != user.ID {
+		c.JSON(403, gin.H{"error": "Forbidden"})
+		return nil
+	}
+
+	return table
+}
+
 func filterWorldAccess(items interface{}, user *models.User) interface{} {
 	itemsVal := reflect.ValueOf(items)
 	if itemsVal.Kind() != reflect.Slice {

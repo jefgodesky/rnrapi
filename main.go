@@ -55,6 +55,7 @@ func main() {
 			authRequired.DELETE("/scrolls/:id/seal", controllers.ScrollUnseal)
 
 			authRequired.POST("/tables", controllers.TableCreate)
+			authRequired.PUT("/tables/:slug", controllers.TableUpdate)
 		}
 
 		authOptional := v.Group("/")

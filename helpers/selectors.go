@@ -40,10 +40,10 @@ func GetInstance(c *gin.Context, model interface{}, slug string, conditions map[
 	result := query.First(model)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			c.JSON(404, gin.H{"error": fmt.Sprintf("%T %s not found", model, slug)})
+			c.JSON(404, gin.H{"error": fmt.Sprintf("%s %s not found", modelType, slug)})
 			return false
 		}
-		c.JSON(500, gin.H{"error": fmt.Sprintf("Failed to retrieve %T", model)})
+		c.JSON(500, gin.H{"error": fmt.Sprintf("Failed to retrieve %s", modelType)})
 		return false
 	}
 

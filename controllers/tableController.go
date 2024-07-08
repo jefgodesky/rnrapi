@@ -57,3 +57,29 @@ func TableRetrieve(c *gin.Context) {
 
 	c.JSON(200, serializers.SerializeTable(*table))
 }
+
+func TableUpdate(c *gin.Context) {
+	table := helpers.TableAuthorOnly(c)
+	if table == nil {
+		return
+	}
+
+	newTable := helpers.BodyToTable(c)
+	table.Name = newTable.Name
+	table.Slug = newTable.Slug
+	table.Description = newTable.Description
+	table.DiceLabel = newTable.DiceLabel
+	table.Formula = newTable.Formula
+	table.Cumulative = newTable.Cumulative
+	table.Rows = newTable.Rows
+	table.Public = newTable.Public
+	table.AuthorID = newTable.AuthorID
+	table.Author = newTable.Author
+
+	if err := initializers.DB.Save(table).Error; err != nil {
+		c.JSON(500, gin.H{"Error": "Failed to update table"})
+		return
+	}
+
+	c.JSON(200, serializers.SerializeTable(*table))
+}
