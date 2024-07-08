@@ -4,6 +4,8 @@ import (
 	"gorm.io/gorm"
 )
 
+const CharacterNoteSeparator = "[ ~~~ CHARACTER NOTE SEPARATOR ~~~]"
+
 type Character struct {
 	ID string `gorm:"primaryKey" json:"id"`
 	gorm.Model
@@ -15,6 +17,7 @@ type Character struct {
 	Int         int    `json:"intelligence"`
 	Wis         int    `json:"wisdom"`
 	Cha         int    `json:"charisma"`
+	Notes       string `json:"notes"`
 	PC          bool   `json:"pc"`
 	Public      bool   `json:"public"`
 	PlayerID    uint   `json:"player_id"`

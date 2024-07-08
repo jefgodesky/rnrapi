@@ -4,6 +4,7 @@ import (
 	"github.com/jefgodesky/rnrapi/initializers"
 	"github.com/jefgodesky/rnrapi/models"
 	"gorm.io/gorm/clause"
+	"strings"
 )
 
 type SerializedAbilities struct {
@@ -75,6 +76,7 @@ func SerializeCharacter(char models.Character) SerializedCharacter {
 		Description: char.Description,
 		Abilities:   abilities,
 		Resistances: resistances,
+		Notes:       strings.Split(char.Notes, models.CharacterNoteSeparator),
 		PC:          char.PC,
 		Campaigns:   campaignStubs,
 		Public:      char.Public,

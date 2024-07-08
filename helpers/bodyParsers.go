@@ -7,6 +7,7 @@ import (
 	"github.com/jefgodesky/rnrapi/enums"
 	"github.com/jefgodesky/rnrapi/initializers"
 	"github.com/jefgodesky/rnrapi/models"
+	"strings"
 )
 
 func UsernamesToUsers(usernames []string) []models.User {
@@ -300,6 +301,7 @@ func BodyToCharacter(c *gin.Context) *models.Character {
 		Int:         body.Abilities.Intelligence,
 		Wis:         body.Abilities.Wisdom,
 		Cha:         body.Abilities.Charisma,
+		Notes:       strings.Join(body.Notes, models.CharacterNoteSeparator),
 		PC:          body.PC,
 		Public:      isPublic,
 		PlayerID:    player.ID,
