@@ -291,6 +291,11 @@ func BodyToCharacter(c *gin.Context) *models.Character {
 		player = GetUserFromContext(c, false)
 	}
 
+	var notes []models.CharacterNote
+	for _, note := range body.Notes {
+		notes = append(notes, models.CharacterNote{Text: note})
+	}
+
 	char := models.Character{
 		Name:        body.Name,
 		Description: body.Description,
@@ -300,6 +305,7 @@ func BodyToCharacter(c *gin.Context) *models.Character {
 		Int:         body.Abilities.Intelligence,
 		Wis:         body.Abilities.Wisdom,
 		Cha:         body.Abilities.Charisma,
+		Notes:       notes,
 		PC:          body.PC,
 		Public:      isPublic,
 		PlayerID:    player.ID,

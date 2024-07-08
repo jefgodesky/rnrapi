@@ -69,12 +69,18 @@ func SerializeCharacter(char models.Character) SerializedCharacter {
 		campaignStubs = append(campaignStubs, StubCampaign(campaign))
 	}
 
+	notes := make([]string, 0)
+	for _, note := range char.Notes {
+		notes = append(notes, note.Text)
+	}
+
 	return SerializedCharacter{
 		ID:          char.ID,
 		Name:        char.Name,
 		Description: char.Description,
 		Abilities:   abilities,
 		Resistances: resistances,
+		Notes:       notes,
 		PC:          char.PC,
 		Campaigns:   campaignStubs,
 		Public:      char.Public,
