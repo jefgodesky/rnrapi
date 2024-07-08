@@ -1,8 +1,6 @@
 package serializers
 
 import (
-	"encoding/json"
-	"fmt"
 	"github.com/jefgodesky/rnrapi/initializers"
 	"github.com/jefgodesky/rnrapi/models"
 	"gorm.io/gorm/clause"
@@ -57,26 +55,14 @@ func SerializeCharacter(char models.Character) SerializedCharacter {
 		Will: max(char.Wis, char.Cha),
 	}
 
-	notesBytes, err := char.Notes.ToBytes()
-	if err != nil {
-		panic("Could not convert JSONField to bytes")
-	}
-
-	var notes []string
-	if err := json.Unmarshal(notesBytes, &notes); err != nil {
-		notes = []string{}
-	}
-
 	var campaigns []models.Campaign
-	err = initializers.DB.Joins("JOIN campaign_pcs ON campaign_pcs.campaign_id = campaigns.id").
+	err := initializers.DB.Joins("JOIN campaign_pcs ON campaign_pcs.campaign_id = campaigns.id").
 		Preload(clause.Associations).
 		Where("campaign_pcs.character_id = ?", char.ID).
 		Find(&campaigns).Error
 	if err != nil {
 		panic("Could not find character campaigns")
 	}
-
-	fmt.Println(campaigns)
 
 	var campaignStubs []CampaignStub
 	for _, campaign := range campaigns {
@@ -89,7 +75,6 @@ func SerializeCharacter(char models.Character) SerializedCharacter {
 		Description: char.Description,
 		Abilities:   abilities,
 		Resistances: resistances,
-		Notes:       notes,
 		PC:          char.PC,
 		Campaigns:   campaignStubs,
 		Public:      char.Public,

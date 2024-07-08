@@ -78,7 +78,6 @@ func CharacterUpdate(c *gin.Context) {
 	char.Int = newChar.Int
 	char.Wis = newChar.Wis
 	char.Cha = newChar.Cha
-	char.Notes = newChar.Notes
 	char.PC = newChar.PC
 	char.Public = newChar.Public
 	char.PlayerID = newChar.PlayerID

@@ -291,13 +291,6 @@ func BodyToCharacter(c *gin.Context) *models.Character {
 		player = GetUserFromContext(c, false)
 	}
 
-	notesJSON, err := json.Marshal(body.Notes)
-	if err != nil {
-		c.JSON(500, gin.H{"error": "Failed to marshal notes"})
-		return nil
-	}
-	notesField := models.JSONField(notesJSON)
-
 	char := models.Character{
 		Name:        body.Name,
 		Description: body.Description,
@@ -307,7 +300,6 @@ func BodyToCharacter(c *gin.Context) *models.Character {
 		Int:         body.Abilities.Intelligence,
 		Wis:         body.Abilities.Wisdom,
 		Cha:         body.Abilities.Charisma,
-		Notes:       notesField,
 		PC:          body.PC,
 		Public:      isPublic,
 		PlayerID:    player.ID,
