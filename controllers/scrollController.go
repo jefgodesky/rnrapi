@@ -42,3 +42,16 @@ func ScrollIndex(c *gin.Context) {
 		"scrolls":   serializers.SerializeScrolls(scrolls),
 	})
 }
+
+func ScrollRetrieve(c *gin.Context) {
+	scroll := helpers.GetScrollFromSlug(c)
+	user := helpers.GetUserFromContext(c, false)
+	allowed := scroll.Public || helpers.IsScrollReader(scroll, user)
+
+	if !allowed {
+		c.JSON(403, gin.H{"error": "Forbidden"})
+		return
+	}
+
+	c.JSON(200, serializers.SerializeScroll(*scroll))
+}

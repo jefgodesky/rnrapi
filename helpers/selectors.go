@@ -138,3 +138,22 @@ func GetCharacter(c *gin.Context, id string) *models.Character {
 
 	return &char
 }
+
+func GetScroll(c *gin.Context, id string) *models.Scroll {
+	var scroll models.Scroll
+	result := initializers.DB.
+		Preload(clause.Associations).
+		Preload("Campaign.World").
+		Where("id = ?", id).First(&scroll)
+
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			c.JSON(404, gin.H{"error": fmt.Sprintf("Scroll %s not found", id)})
+			return nil
+		}
+		c.JSON(500, gin.H{"error": "Failed to retrieve scroll"})
+		return nil
+	}
+
+	return &scroll
+}

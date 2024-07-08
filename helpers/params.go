@@ -37,3 +37,8 @@ func GetCharacterFromSlug(c *gin.Context) *models.Character {
 	id := c.Param("id")
 	return GetCharacter(c, id)
 }
+
+func GetScrollFromSlug(c *gin.Context) *models.Scroll {
+	id := c.Param("id")
+	return GetScroll(c, id)
+}

@@ -20,6 +20,33 @@ func IsWorldCreator(world *models.World, user *models.User) bool {
 	return false
 }
 
+func IsScrollUser(scroll *models.Scroll, user *models.User, role string) bool {
+	if user == nil || scroll == nil {
+		return false
+	}
+
+	list := scroll.Readers
+	if role == "Writers" {
+		list = scroll.Writers
+	}
+
+	for _, u := range list {
+		if u.ID == user.ID {
+			return true
+		}
+	}
+
+	return false
+}
+
+func IsScrollReader(scroll *models.Scroll, user *models.User) bool {
+	return IsScrollUser(scroll, user, "Readers")
+}
+
+func IsScrollWriter(scroll *models.Scroll, user *models.User) bool {
+	return IsScrollUser(scroll, user, "Writers")
+}
+
 func HasWorldAccess(world *models.World, user *models.User) bool {
 	if world.Public {
 		return true

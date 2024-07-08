@@ -5,14 +5,14 @@ import (
 )
 
 type SerializedScroll struct {
-	ID          string       `json:"id"`
-	Name        string       `json:"name"`
-	Description string       `json:"description"`
-	Seals       uint         `json:"seals"`
-	Writers     []string     `json:"writers"`
-	Readers     []string     `json:"readers"`
-	Public      bool         `json:"public"`
-	Campaign    CampaignStub `json:"campaign"`
+	ID          string        `json:"id"`
+	Name        string        `json:"name"`
+	Description string        `json:"description"`
+	Seals       uint          `json:"seals"`
+	Writers     []string      `json:"writers"`
+	Readers     []string      `json:"readers"`
+	Public      bool          `json:"public"`
+	Campaign    *CampaignStub `json:"campaign,omitempty"`
 }
 
 type ScrollStub struct {
@@ -32,7 +32,8 @@ func SerializeScroll(scroll models.Scroll) SerializedScroll {
 	}
 
 	if scroll.Campaign != nil {
-		serialized.Campaign = StubCampaign(*scroll.Campaign)
+		ptr := StubCampaign(*scroll.Campaign)
+		serialized.Campaign = &ptr
 	}
 
 	return serialized

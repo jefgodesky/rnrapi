@@ -70,6 +70,7 @@ func main() {
 			authOptional.GET("/characters/:id", controllers.CharacterRetrieve)
 
 			authOptional.GET("/scrolls", controllers.ScrollIndex)
+			authOptional.GET("/scrolls/:id", controllers.ScrollRetrieve)
 		}
 	}
 
