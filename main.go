@@ -57,6 +57,8 @@ func main() {
 			authRequired.POST("/tables", controllers.TableCreate)
 			authRequired.PUT("/tables/:slug", controllers.TableUpdate)
 			authRequired.DELETE("/tables/:slug", controllers.TableDestroy)
+
+			authRequired.GET("/rolls", controllers.RollIndex)
 		}
 
 		authOptional := v.Group("/")
