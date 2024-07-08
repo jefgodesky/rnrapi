@@ -78,18 +78,26 @@ func evaluateFormulaDice(formula string, roll *models.Roll) string {
 }
 
 func evaluateFormulaTables(formula string, roll *models.Roll) string {
-	re := regexp.MustCompile(`\[([^\]]+)\]`)
+	re := regexp.MustCompile(`\[(\d*)x?\s*([^\]]+)\]`)
 	matches := re.FindAllStringSubmatch(formula, -1)
 	if matches == nil {
 		return formula
 	}
 
 	for _, match := range matches {
-		if len(match) < 2 {
+		if len(match) < 3 {
 			continue
 		}
 
-		tableSlug := match[1]
+		times := 1
+		if match[1] != "" {
+			parsed, err := strconv.Atoi(match[1])
+			if err == nil {
+				times = parsed
+			}
+		}
+
+		tableSlug := match[2]
 		var table models.Table
 		result := initializers.DB.
 			Preload(clause.Associations).
@@ -99,12 +107,16 @@ func evaluateFormulaTables(formula string, roll *models.Roll) string {
 			continue
 		}
 
-		subRoll := PrepareSubRoll(roll, &table)
-		RollOnTable(table, &subRoll, 0)
-		results := strings.Split(subRoll.Results, models.RollResultSeparator)
-		resultsCS := strings.Join(results, ", ")
-		formula = strings.Replace(formula, match[0], resultsCS, 1)
-		AddToLog(roll, []string{subRoll.Log})
+		rolls := make([]string, 0)
+		for i := 0; i < times; i++ {
+			subRoll := PrepareSubRoll(roll, &table)
+			RollOnTable(table, &subRoll, 0)
+			results := strings.Split(subRoll.Results, models.RollResultSeparator)
+			rolls = append(rolls, strings.Join(results, ", "))
+			AddToLog(roll, []string{subRoll.Log})
+		}
+
+		formula = strings.Replace(formula, match[0], strings.Join(rolls, ", "), 1)
 	}
 
 	return formula
