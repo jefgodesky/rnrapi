@@ -2,7 +2,6 @@ package models
 
 import (
 	"gorm.io/gorm"
-	"strings"
 )
 
 type TableRow struct {
@@ -27,12 +26,4 @@ type Table struct {
 	Public      bool       `json:"public"`
 	AuthorID    uint       `json:"author_id"`
 	Author      User       `gorm:"foreignKey:AuthorID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"author"`
-}
-
-func IsValidAbility(ability string) bool {
-	physical := "Strength Dexterity Constitution"
-	mental := "Intelligence Wisdom Charisma"
-	resistances := "Fortitude Reflexes Will"
-	validAbilities := physical + " " + mental + " " + resistances
-	return strings.Contains(validAbilities, ability)
 }

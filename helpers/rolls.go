@@ -77,7 +77,7 @@ func evaluateFormulaDice(formula string, roll *models.Roll) string {
 	return formula
 }
 
-func evaluateFormulaTables(formula string, roll *models.Roll) string {
+func evaluateFormulaTables(formula string, roll *models.Roll, char *models.Character) string {
 	re := regexp.MustCompile(`\[(\d*)x?\s*([^\]]+)\]`)
 	matches := re.FindAllStringSubmatch(formula, -1)
 	if matches == nil {
@@ -110,7 +110,7 @@ func evaluateFormulaTables(formula string, roll *models.Roll) string {
 		rolls := make([]string, 0)
 		for i := 0; i < times; i++ {
 			subRoll := PrepareSubRoll(roll, &table)
-			RollOnTable(table, &subRoll, 0)
+			RollOnTable(table, &subRoll, 0, char)
 			results := strings.Split(subRoll.Results, models.RollResultSeparator)
 			rolls = append(rolls, strings.Join(results, ", "))
 			AddToLog(roll, []string{subRoll.Log})
@@ -122,36 +122,40 @@ func evaluateFormulaTables(formula string, roll *models.Roll) string {
 	return formula
 }
 
-func EvaluateFormula(formula string, roll *models.Roll) {
+func EvaluateFormula(formula string, roll *models.Roll, char *models.Character) {
 	formula = evaluateFormulaDice(formula, roll)
-	formula = evaluateFormulaTables(formula, roll)
+	formula = evaluateFormulaTables(formula, roll, char)
 	AddToResults(roll, []string{formula})
 }
 
-func ProcessRow(row models.TableRow, roll *models.Roll) {
+func ProcessRow(row models.TableRow, roll *models.Roll, char *models.Character) {
 	if row.Formula != nil {
-		EvaluateFormula(*row.Formula, roll)
+		EvaluateFormula(*row.Formula, roll, char)
 	} else {
 		AddToResults(roll, []string{row.Text})
 	}
 }
 
-func CheckTable(table models.Table, number int, roll *models.Roll) {
+func CheckTable(table models.Table, number int, roll *models.Roll, char *models.Character) {
 	for _, row := range table.Rows {
 		moreThanMin := row.Min == nil || number >= *row.Min
 		lessThanMax := row.Max == nil || number <= *row.Max
 		if (table.Cumulative && moreThanMin) || (moreThanMin && lessThanMax) {
-			ProcessRow(row, roll)
+			ProcessRow(row, roll, char)
 		}
 	}
 }
 
-func RollOnTable(table models.Table, roll *models.Roll, modifier int) {
+func RollOnTable(table models.Table, roll *models.Roll, modifier int, char *models.Character) {
 	logMsg := fmt.Sprintf("Rolling on %s [%s]", table.Name, table.Slug)
 	AddToLog(roll, []string{logMsg})
+
+	if table.Ability != nil && char != nil {
+		modifier = models.GetAbility(*char, *table.Ability)
+	}
 
 	modifierStr := "+" + strconv.Itoa(modifier)
 	res, _, _ := dice.Roll(table.Formula + modifierStr)
 	LogRoll(roll, res)
-	CheckTable(table, res.Int(), roll)
+	CheckTable(table, res.Int(), roll, char)
 }

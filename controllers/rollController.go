@@ -13,7 +13,7 @@ func RollCreate(c *gin.Context) {
 		return
 	}
 
-	helpers.RollOnTable(roll.Table, roll, roll.Modifier)
+	helpers.RollOnTable(roll.Table, roll, roll.Modifier, roll.Character)
 
 	if result := initializers.DB.Create(&roll); result.Error != nil {
 		c.JSON(500, gin.H{"error": "Failed to create roll record"})
