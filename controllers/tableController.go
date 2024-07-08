@@ -4,7 +4,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jefgodesky/rnrapi/helpers"
 	"github.com/jefgodesky/rnrapi/initializers"
+	"github.com/jefgodesky/rnrapi/models"
 	"github.com/jefgodesky/rnrapi/serializers"
+	"gorm.io/gorm/clause"
 )
 
 func TableCreate(c *gin.Context) {
@@ -16,4 +18,29 @@ func TableCreate(c *gin.Context) {
 	}
 
 	c.JSON(200, serializers.SerializeTable(*table))
+}
+
+func TableIndex(c *gin.Context) {
+	var tables []models.Table
+	user := helpers.GetUserFromContext(c, false)
+	query := initializers.DB.
+		Preload(clause.Associations).
+		Model(&models.Table{})
+
+	if user != nil {
+		query.Where("public = ? OR author_id = ?", true, user.ID)
+	} else {
+		query.Where("public = ?", true)
+	}
+
+	var total int64
+	query.Count(&total)
+	query.Scopes(helpers.Paginate(c)).Find(&tables)
+
+	c.JSON(200, gin.H{
+		"total":     total,
+		"page":      c.GetInt("page"),
+		"page_size": c.GetInt("page_size"),
+		"tables":    serializers.SerializeTables(tables),
+	})
 }

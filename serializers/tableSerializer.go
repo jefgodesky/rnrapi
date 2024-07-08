@@ -24,8 +24,10 @@ type SerializedTable struct {
 }
 
 type TableStub struct {
-	Name string `json:"name"`
-	Path string `json:"path"`
+	Name        string   `json:"name"`
+	Path        string   `json:"path"`
+	Description string   `json:"description"`
+	Author      UserStub `json:"author"`
 }
 
 func SerializeTableRow(row models.TableRow) SerializedRow {
@@ -58,8 +60,10 @@ func SerializeTable(table models.Table) SerializedTable {
 
 func StubTable(table models.Table) TableStub {
 	return TableStub{
-		Name: table.Name,
-		Path: "/tables/" + table.Slug,
+		Name:        table.Name,
+		Path:        "/tables/" + table.Slug,
+		Description: table.Description,
+		Author:      StubUser(table.Author),
 	}
 }
 
