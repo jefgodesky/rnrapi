@@ -93,3 +93,19 @@ func ScrollDestroy(c *gin.Context) {
 
 	c.JSON(200, serializers.SerializeScroll(*scroll))
 }
+
+func ScrollSeal(c *gin.Context) {
+	scroll := helpers.ScrollWriterOnly(c)
+	if scroll == nil {
+		return
+	}
+
+	scroll.Seals += 1
+
+	if err := initializers.DB.Save(scroll).Error; err != nil {
+		c.JSON(500, gin.H{"Error": "Failed to update scroll"})
+		return
+	}
+
+	c.JSON(200, serializers.SerializeScroll(*scroll))
+}
