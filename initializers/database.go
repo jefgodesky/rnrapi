@@ -33,7 +33,6 @@ func MigrateDB() error {
 		&models.Species{},
 		&models.Society{},
 		&models.Character{},
-		&models.CharacterNote{},
 	)
 
 	if err != nil {

@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/jefgodesky/rnrapi/helpers"
 	"github.com/jefgodesky/rnrapi/initializers"
@@ -83,23 +82,6 @@ func CharacterUpdate(c *gin.Context) {
 	char.Public = newChar.Public
 	char.PlayerID = newChar.PlayerID
 	char.Player = newChar.Player
-
-	if err := initializers.DB.Where("character_id = ?", char.ID).Delete(&models.CharacterNote{}).Error; err != nil {
-		c.JSON(500, gin.H{"error": "Failed to delete existing notes"})
-		return
-	}
-
-	for _, note := range newChar.Notes {
-		fmt.Println(note)
-		note.CharacterID = char.ID
-		if err := initializers.DB.Create(&note).Error; err != nil {
-			fmt.Println(err)
-			c.JSON(500, gin.H{"error": "Failed to add new notes"})
-			return
-		}
-	}
-
-	char.Notes = newChar.Notes
 
 	if err := initializers.DB.Save(char).Error; err != nil {
 		c.JSON(500, gin.H{"Error": "Failed to update character"})
