@@ -79,6 +79,7 @@ func main() {
 			authOptional.GET("/scrolls/:id", controllers.ScrollRetrieve)
 
 			authOptional.GET("/tables", controllers.TableIndex)
+			authOptional.GET("/tables/:slug", controllers.TableRetrieve)
 		}
 	}
 

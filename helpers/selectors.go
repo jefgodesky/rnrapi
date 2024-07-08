@@ -16,6 +16,7 @@ var PreloadPaths = map[string][]string{
 	"Campaign": {"GMs", "PCs", "World", "World.Creators"},
 	"Species":  {"World", "World.Creators"},
 	"Society":  {"World", "World.Creators"},
+	"Table":    {"Rows", "Author"},
 }
 
 func GetInstance(c *gin.Context, model interface{}, slug string, conditions map[string]interface{}) bool {
@@ -156,4 +157,12 @@ func GetScroll(c *gin.Context, id string) *models.Scroll {
 	}
 
 	return &scroll
+}
+
+func GetTable(c *gin.Context, slug string) *models.Table {
+	var table models.Table
+	if !GetInstance(c, &table, slug, map[string]interface{}{}) {
+		return nil
+	}
+	return &table
 }

@@ -42,3 +42,8 @@ func GetScrollFromSlug(c *gin.Context) *models.Scroll {
 	id := c.Param("id")
 	return GetScroll(c, id)
 }
+
+func GetTableFromSlug(c *gin.Context) *models.Table {
+	slug := c.Param("slug")
+	return GetTable(c, slug)
+}

@@ -44,3 +44,16 @@ func TableIndex(c *gin.Context) {
 		"tables":    serializers.SerializeTables(tables),
 	})
 }
+
+func TableRetrieve(c *gin.Context) {
+	table := helpers.GetTableFromSlug(c)
+	user := helpers.GetUserFromContext(c, false)
+	allowed := table.Public || table.Author.ID == user.ID
+
+	if !allowed {
+		c.JSON(403, gin.H{"error": "Forbidden"})
+		return
+	}
+
+	c.JSON(200, serializers.SerializeTable(*table))
+}
