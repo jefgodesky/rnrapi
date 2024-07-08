@@ -36,6 +36,7 @@ func MigrateDB() error {
 		&models.Scroll{},
 		&models.Table{},
 		&models.TableRow{},
+		&models.Roll{},
 	)
 
 	if err != nil {

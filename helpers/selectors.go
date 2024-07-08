@@ -166,3 +166,22 @@ func GetTable(c *gin.Context, slug string) *models.Table {
 	}
 	return &table
 }
+
+func GetRoll(c *gin.Context, id string) *models.Roll {
+	var roll models.Roll
+	result := initializers.DB.
+		Preload(clause.Associations).
+		Preload("Campaign.World").
+		Where("id = ?", id).First(&roll)
+
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			c.JSON(404, gin.H{"error": fmt.Sprintf("Roll %s not found", id)})
+			return nil
+		}
+		c.JSON(500, gin.H{"error": "Failed to retrieve roll"})
+		return nil
+	}
+
+	return &roll
+}

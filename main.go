@@ -82,6 +82,8 @@ func main() {
 
 			authOptional.GET("/tables", controllers.TableIndex)
 			authOptional.GET("/tables/:slug", controllers.TableRetrieve)
+
+			authOptional.POST("/rolls", controllers.RollCreate)
 		}
 	}
 

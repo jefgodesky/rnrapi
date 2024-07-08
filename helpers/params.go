@@ -47,3 +47,8 @@ func GetTableFromSlug(c *gin.Context) *models.Table {
 	slug := c.Param("slug")
 	return GetTable(c, slug)
 }
+
+func GetRollFromID(c *gin.Context) *models.Roll {
+	id := c.Param("id")
+	return GetRoll(c, id)
+}
