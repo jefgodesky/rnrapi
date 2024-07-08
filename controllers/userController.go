@@ -53,7 +53,7 @@ func UserIndex(c *gin.Context) {
 }
 
 func UserRetrieve(c *gin.Context) {
-	user := helpers.GetUserFromSlug(c)
+	user := helpers.GetUserFromUsername(c)
 	if user == nil {
 		return
 	}

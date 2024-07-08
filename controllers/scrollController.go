@@ -45,7 +45,7 @@ func ScrollIndex(c *gin.Context) {
 }
 
 func ScrollRetrieve(c *gin.Context) {
-	scroll := helpers.GetScrollFromSlug(c)
+	scroll := helpers.GetScrollFromID(c)
 	user := helpers.GetUserFromContext(c, false)
 	allowed := scroll.Public || helpers.IsScrollReader(scroll, user)
 

@@ -28,17 +28,17 @@ func GetSocietyFromSlug(c *gin.Context) *models.Society {
 	return GetSociety(c, world, slug)
 }
 
-func GetUserFromSlug(c *gin.Context) *models.User {
+func GetUserFromUsername(c *gin.Context) *models.User {
 	username := c.Param("username")
 	return GetUser(c, username, true)
 }
 
-func GetCharacterFromSlug(c *gin.Context) *models.Character {
+func GetCharacterFromID(c *gin.Context) *models.Character {
 	id := c.Param("id")
 	return GetCharacter(c, id)
 }
 
-func GetScrollFromSlug(c *gin.Context) *models.Scroll {
+func GetScrollFromID(c *gin.Context) *models.Scroll {
 	id := c.Param("id")
 	return GetScroll(c, id)
 }

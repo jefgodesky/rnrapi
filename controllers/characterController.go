@@ -49,7 +49,7 @@ func CharacterIndex(c *gin.Context) {
 }
 
 func CharacterRetrieve(c *gin.Context) {
-	char := helpers.GetCharacterFromSlug(c)
+	char := helpers.GetCharacterFromID(c)
 	user := helpers.GetUserFromContext(c, false)
 	if char == nil {
 		return

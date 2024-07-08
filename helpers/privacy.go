@@ -80,7 +80,7 @@ func WorldCreatorOnly(c *gin.Context) *models.World {
 }
 
 func CharacterPlayerOnly(c *gin.Context) *models.Character {
-	char := GetCharacterFromSlug(c)
+	char := GetCharacterFromID(c)
 	if char == nil {
 		return nil
 	}
@@ -99,7 +99,7 @@ func CharacterPlayerOnly(c *gin.Context) *models.Character {
 }
 
 func ScrollWriterOnly(c *gin.Context) *models.Scroll {
-	scroll := GetScrollFromSlug(c)
+	scroll := GetScrollFromID(c)
 	if scroll == nil {
 		return nil
 	}
