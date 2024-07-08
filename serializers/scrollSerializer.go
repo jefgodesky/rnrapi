@@ -45,7 +45,7 @@ func StubScroll(scroll models.Scroll) ScrollStub {
 	}
 }
 
-func SerializedScrolls(scrolls []models.Scroll) []ScrollStub {
+func SerializeScrolls(scrolls []models.Scroll) []ScrollStub {
 	stubs := make([]ScrollStub, 0)
 	for _, scroll := range scrolls {
 		stubs = append(stubs, StubScroll(scroll))
