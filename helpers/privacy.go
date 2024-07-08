@@ -98,6 +98,26 @@ func CharacterPlayerOnly(c *gin.Context) *models.Character {
 	return char
 }
 
+func ScrollWriterOnly(c *gin.Context) *models.Scroll {
+	scroll := GetScrollFromSlug(c)
+	if scroll == nil {
+		return nil
+	}
+
+	user := GetUserFromContext(c, true)
+	if user == nil {
+		return nil
+	}
+
+	isWriter := IsScrollWriter(scroll, user)
+	if !isWriter {
+		c.JSON(403, gin.H{"error": "Forbidden"})
+		return nil
+	}
+
+	return scroll
+}
+
 func filterWorldAccess(items interface{}, user *models.User) interface{} {
 	itemsVal := reflect.ValueOf(items)
 	if itemsVal.Kind() != reflect.Slice {

@@ -55,3 +55,27 @@ func ScrollRetrieve(c *gin.Context) {
 
 	c.JSON(200, serializers.SerializeScroll(*scroll))
 }
+
+func ScrollUpdate(c *gin.Context) {
+	scroll := helpers.ScrollWriterOnly(c)
+	if scroll == nil {
+		return
+	}
+
+	newScroll := helpers.BodyToScroll(c)
+	scroll.Name = newScroll.Name
+	scroll.Description = newScroll.Description
+	scroll.Seals = newScroll.Seals
+	scroll.Writers = newScroll.Writers
+	scroll.Readers = newScroll.Readers
+	scroll.Public = newScroll.Public
+	scroll.CampaignID = newScroll.CampaignID
+	scroll.Campaign = newScroll.Campaign
+
+	if err := initializers.DB.Save(scroll).Error; err != nil {
+		c.JSON(500, gin.H{"Error": "Failed to update scroll"})
+		return
+	}
+
+	c.JSON(200, serializers.SerializeScroll(*scroll))
+}
