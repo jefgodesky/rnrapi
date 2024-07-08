@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/jefgodesky/rnrapi/helpers"
 	"github.com/jefgodesky/rnrapi/initializers"
@@ -103,6 +104,25 @@ func ScrollSeal(c *gin.Context) {
 	scroll.Seals += 1
 
 	if err := initializers.DB.Save(scroll).Error; err != nil {
+		c.JSON(500, gin.H{"Error": "Failed to update scroll"})
+		return
+	}
+
+	c.JSON(200, serializers.SerializeScroll(*scroll))
+}
+
+func ScrollUnseal(c *gin.Context) {
+	scroll := helpers.ScrollWriterOnly(c)
+	if scroll == nil {
+		return
+	}
+
+	if scroll.Seals > 0 {
+		scroll.Seals -= 1
+	}
+
+	if err := initializers.DB.Save(scroll).Error; err != nil {
+		fmt.Println(err)
 		c.JSON(500, gin.H{"Error": "Failed to update scroll"})
 		return
 	}

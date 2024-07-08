@@ -52,6 +52,7 @@ func main() {
 			authRequired.PUT("/scrolls/:id", controllers.ScrollUpdate)
 			authRequired.DELETE("/scrolls/:id", controllers.ScrollDestroy)
 			authRequired.POST("/scrolls/:id/seal", controllers.ScrollSeal)
+			authRequired.DELETE("/scrolls/:id/seal", controllers.ScrollUnseal)
 		}
 
 		authOptional := v.Group("/")
