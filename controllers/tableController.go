@@ -83,3 +83,17 @@ func TableUpdate(c *gin.Context) {
 
 	c.JSON(200, serializers.SerializeTable(*table))
 }
+
+func TableDestroy(c *gin.Context) {
+	table := helpers.TableAuthorOnly(c)
+	if table == nil {
+		return
+	}
+
+	if err := initializers.DB.Delete(&table).Error; err != nil {
+		c.JSON(500, gin.H{"Error": "Failed to destroy table"})
+		return
+	}
+
+	c.JSON(200, serializers.SerializeTable(*table))
+}
