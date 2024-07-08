@@ -17,6 +17,7 @@ type SerializedTable struct {
 	Description string          `json:"description"`
 	DiceLabel   string          `json:"dice-label"`
 	Formula     string          `json:"formula"`
+	Ability     *string         `json:"ability,omitempty"`
 	Cumulative  bool            `json:"cumulative"`
 	Rows        []SerializedRow `json:"rows"`
 	Public      bool            `json:"public"`
@@ -45,7 +46,7 @@ func SerializeTable(table models.Table) SerializedTable {
 		rows[i] = SerializeTableRow(row)
 	}
 
-	return SerializedTable{
+	serialized := SerializedTable{
 		Name:        table.Name,
 		Slug:        table.Slug,
 		Description: table.Description,
@@ -56,6 +57,12 @@ func SerializeTable(table models.Table) SerializedTable {
 		Public:      table.Public,
 		Author:      StubUser(table.Author),
 	}
+
+	if table.Ability != nil && models.IsValidAbility(*table.Ability) {
+		serialized.Ability = table.Ability
+	}
+
+	return serialized
 }
 
 func StubTable(table models.Table) TableStub {

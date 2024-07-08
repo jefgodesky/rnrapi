@@ -360,6 +360,7 @@ func BodyToTable(c *gin.Context) *models.Table {
 		Description string         `json:"description"`
 		DiceLabel   string         `json:"dice-label"`
 		Formula     string         `json:"formula"`
+		Ability     *string        `json:"ability,omitempty"`
 		Cumulative  *bool          `json:"cumulative"`
 		Rows        []TableRowBody `json:"rows"`
 		Public      *bool          `json:"public"`
@@ -413,6 +414,10 @@ func BodyToTable(c *gin.Context) *models.Table {
 		Rows:        rows,
 		Public:      isPublic,
 		Author:      *author,
+	}
+
+	if body.Ability != nil && models.IsValidAbility(*body.Ability) {
+		table.Ability = body.Ability
 	}
 
 	return &table
