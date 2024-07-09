@@ -3,6 +3,7 @@ name: Deploy New Release
 on:
   release:
     types: [created]
+  workflow_dispatch:
 
 jobs:
   deploy:
