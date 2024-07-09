@@ -18,15 +18,15 @@ func init() {
 func Root(c *gin.Context) {
 	campaigns := map[string]string{
 		"description": "Campaigns being played.",
-		"collection":  "GET, POST*",
-		"resource":    "GET, PUT*, DELETE*",
+		"collection":  "GET, HEAD, POST*",
+		"resource":    "GET, HEAD, PUT*, DELETE*",
 		"location":    apiVersion + "/campaigns",
 	}
 
 	characters := map[string]interface{}{
 		"description": "Game characters (both PCs and NPCs).",
-		"collection":  "GET, POST*",
-		"resource":    "GET, PUT*, DELETE*",
+		"collection":  "GET, HEAD, POST*",
+		"resource":    "GET, HEAD, PUT*, DELETE*",
 		"location":    apiVersion + "/characters",
 	}
 
@@ -39,50 +39,50 @@ func Root(c *gin.Context) {
 
 	rolls := map[string]interface{}{
 		"description": "Rolls made on random tables.",
-		"collection":  "GET, POST*",
-		"resource":    "GET, DELETE*",
+		"collection":  "GET, HEAD, POST*",
+		"resource":    "GET, HEAD, DELETE*",
 		"location":    apiVersion + "/rolls",
 	}
 
 	scrolls := map[string]interface{}{
 		"description": "Scrolls and their current status.",
-		"collection":  "GET, POST*",
-		"resource":    "GET, PUT*, DELETE*",
+		"collection":  "GET, HEAD, POST*",
+		"resource":    "GET, HEAD, PUT*, DELETE*",
 		"location":    apiVersion + "/scrolls",
 	}
 
 	societies := map[string]interface{}{
 		"description": "Fantasy societies and cultures.",
-		"collection":  "GET, POST*",
-		"resource":    "GET, PUT*, DELETE*",
+		"collection":  "GET, HEAD, POST*",
+		"resource":    "GET, HEAD, PUT*, DELETE*",
 		"location":    apiVersion + "/societies",
 	}
 
 	species := map[string]interface{}{
 		"description": "Fantasy species (e.g., elves and goblins).",
-		"collection":  "GET, POST*",
-		"resource":    "GET, PUT*, DELETE*",
+		"collection":  "GET, HEAD, POST*",
+		"resource":    "GET, HEAD, PUT*, DELETE*",
 		"location":    apiVersion + "/species",
 	}
 
 	tables := map[string]interface{}{
 		"description": "Random tables.",
-		"collection":  "GET, POST*",
-		"resource":    "GET, PUT*, DELETE*",
+		"collection":  "GET, HEAD, POST*",
+		"resource":    "GET, HEAD, PUT*, DELETE*",
 		"location":    apiVersion + "/tables",
 	}
 
 	users := map[string]interface{}{
 		"description": "User records.",
-		"collection":  "GET, POST*",
-		"resource":    "GET, PUT*, DELETE*",
+		"collection":  "GET, HEAD, POST*",
+		"resource":    "GET, HEAD, PUT*, DELETE*",
 		"location":    apiVersion + "/users",
 	}
 
 	worlds := map[string]interface{}{
 		"description": "Fictional worlds.",
-		"collection":  "GET, POST*",
-		"resource":    "GET, PUT*, DELETE*",
+		"collection":  "GET, HEAD, POST*",
+		"resource":    "GET, HEAD, PUT*, DELETE*",
 		"location":    apiVersion + "/worlds",
 	}
 
@@ -114,10 +114,13 @@ func main() {
 	v := r.Group(apiVersion)
 	{
 		v.GET("/", Root)
+		v.HEAD("/", Root)
 
 		v.POST("/users", controllers.UserCreate)
 		v.GET("/users", controllers.UserIndex)
+		v.HEAD("/users", controllers.UserIndex)
 		v.GET("/users/:username", controllers.UserRetrieve)
+		v.HEAD("/users/:username", controllers.UserRetrieve)
 
 		authRequired := v.Group("/")
 		authRequired.Use(middlewares.AuthRequired())
@@ -156,7 +159,9 @@ func main() {
 			authRequired.DELETE("/tables/:slug", controllers.TableDestroy)
 
 			authRequired.GET("/rolls", controllers.RollIndex)
+			authRequired.HEAD("/rolls", controllers.RollIndex)
 			authRequired.GET("/rolls/:id", controllers.RollRetrieve)
+			authRequired.HEAD("/rolls/:id", controllers.RollRetrieve)
 			authRequired.DELETE("/rolls/:id", controllers.RollDestroy)
 		}
 
@@ -164,25 +169,39 @@ func main() {
 		authOptional.Use(middlewares.AuthOptional())
 		{
 			authOptional.GET("/worlds", controllers.WorldIndex)
+			authOptional.HEAD("/worlds", controllers.WorldIndex)
 			authOptional.GET("/worlds/:slug", controllers.WorldRetrieve)
+			authOptional.HEAD("/worlds/:slug", controllers.WorldRetrieve)
 
 			authOptional.GET("/campaigns", controllers.CampaignIndex)
+			authOptional.HEAD("/campaigns", controllers.CampaignIndex)
 			authOptional.GET("/campaigns/:world/:slug", controllers.CampaignRetrieve)
+			authOptional.HEAD("/campaigns/:world/:slug", controllers.CampaignRetrieve)
 
 			authOptional.GET("/species", controllers.SpeciesIndex)
+			authOptional.HEAD("/species", controllers.SpeciesIndex)
 			authOptional.GET("/species/:world/:slug", controllers.SpeciesRetrieve)
+			authOptional.HEAD("/species/:world/:slug", controllers.SpeciesRetrieve)
 
 			authOptional.GET("/societies", controllers.SocietyIndex)
+			authOptional.HEAD("/societies", controllers.SocietyIndex)
 			authOptional.GET("/societies/:world/:slug", controllers.SocietyRetrieve)
+			authOptional.HEAD("/societies/:world/:slug", controllers.SocietyRetrieve)
 
 			authOptional.GET("/characters", controllers.CharacterIndex)
+			authOptional.HEAD("/characters", controllers.CharacterIndex)
 			authOptional.GET("/characters/:id", controllers.CharacterRetrieve)
+			authOptional.HEAD("/characters/:id", controllers.CharacterRetrieve)
 
 			authOptional.GET("/scrolls", controllers.ScrollIndex)
+			authOptional.HEAD("/scrolls", controllers.ScrollIndex)
 			authOptional.GET("/scrolls/:id", controllers.ScrollRetrieve)
+			authOptional.HEAD("/scrolls/:id", controllers.ScrollRetrieve)
 
 			authOptional.GET("/tables", controllers.TableIndex)
+			authOptional.HEAD("/tables", controllers.TableIndex)
 			authOptional.GET("/tables/:slug", controllers.TableRetrieve)
+			authOptional.HEAD("/tables/:slug", controllers.TableRetrieve)
 
 			authOptional.POST("/rolls", controllers.RollCreate)
 		}
