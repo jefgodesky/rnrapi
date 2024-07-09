@@ -15,6 +15,92 @@ func init() {
 	initializers.MigrateDB()
 }
 
+func Root(c *gin.Context) {
+	campaigns := map[string]string{
+		"description": "Campaigns being played.",
+		"collection":  "GET, POST*",
+		"resource":    "GET, PUT*, DELETE*",
+		"location":    apiVersion + "/campaigns",
+	}
+
+	characters := map[string]interface{}{
+		"description": "Game characters (both PCs and NPCs).",
+		"collection":  "GET, POST*",
+		"resource":    "GET, PUT*, DELETE*",
+		"location":    apiVersion + "/characters",
+	}
+
+	key := map[string]interface{}{
+		"description": "Cycle your API key.",
+		"collection":  "PUT*",
+		"resource":    "",
+		"location":    apiVersion + "/key",
+	}
+
+	rolls := map[string]interface{}{
+		"description": "Rolls made on random tables.",
+		"collection":  "GET, POST*",
+		"resource":    "GET, DELETE*",
+		"location":    apiVersion + "/rolls",
+	}
+
+	scrolls := map[string]interface{}{
+		"description": "Scrolls and their current status.",
+		"collection":  "GET, POST*",
+		"resource":    "GET, PUT*, DELETE*",
+		"location":    apiVersion + "/scrolls",
+	}
+
+	societies := map[string]interface{}{
+		"description": "Fantasy societies and cultures.",
+		"collection":  "GET, POST*",
+		"resource":    "GET, PUT*, DELETE*",
+		"location":    apiVersion + "/societies",
+	}
+
+	species := map[string]interface{}{
+		"description": "Fantasy species (e.g., elves and goblins).",
+		"collection":  "GET, POST*",
+		"resource":    "GET, PUT*, DELETE*",
+		"location":    apiVersion + "/species",
+	}
+
+	tables := map[string]interface{}{
+		"description": "Random tables.",
+		"collection":  "GET, POST*",
+		"resource":    "GET, PUT*, DELETE*",
+		"location":    apiVersion + "/tables",
+	}
+
+	users := map[string]interface{}{
+		"description": "User records.",
+		"collection":  "GET, POST*",
+		"resource":    "GET, PUT*, DELETE*",
+		"location":    apiVersion + "/users",
+	}
+
+	worlds := map[string]interface{}{
+		"description": "Fictional worlds.",
+		"collection":  "GET, POST*",
+		"resource":    "GET, PUT*, DELETE*",
+		"location":    apiVersion + "/worlds",
+	}
+
+	c.JSON(200, gin.H{
+		"note":       "* These endpoints require authentication. Provide a valid API key for Bearer authentication.",
+		"campaigns":  campaigns,
+		"characters": characters,
+		"key":        key,
+		"rolls":      rolls,
+		"scrolls":    scrolls,
+		"societies":  societies,
+		"species":    species,
+		"tables":     tables,
+		"users":      users,
+		"worlds":     worlds,
+	})
+}
+
 func main() {
 	r := gin.Default()
 
@@ -27,6 +113,8 @@ func main() {
 
 	v := r.Group(apiVersion)
 	{
+		v.GET("/", Root)
+
 		v.POST("/users", controllers.UserCreate)
 		v.GET("/users", controllers.UserIndex)
 		v.GET("/users/:username", controllers.UserRetrieve)
