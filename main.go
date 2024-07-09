@@ -5,6 +5,7 @@ import (
 	"github.com/jefgodesky/rnrapi/controllers"
 	"github.com/jefgodesky/rnrapi/initializers"
 	"github.com/jefgodesky/rnrapi/middlewares"
+	"log"
 )
 
 const apiVersion = "/v1"
@@ -16,6 +17,14 @@ func init() {
 
 func main() {
 	r := gin.Default()
+
+	trustedProxies := []string{
+		"127.0.0.1",
+	}
+	if err := r.SetTrustedProxies(trustedProxies); err != nil {
+		log.Fatalf("Failed to set trusted proxies: %v", err)
+	}
+	
 	v := r.Group(apiVersion)
 	{
 		v.POST("/users", controllers.UserCreate)
