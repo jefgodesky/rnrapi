@@ -24,5 +24,9 @@
 go.work
 go.work.sum
 
+# Self-signed certificates for local development
+selfsigned.crt
+selfsigned.key
+
 # Ignore IDE configuration
 .idea

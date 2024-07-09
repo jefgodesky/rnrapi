@@ -12,8 +12,6 @@ services:
       - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
     env_file:
       - ./.prod.postgres.env
-    networks:
-      - rnrapi
 
   api:
     build:
@@ -27,9 +25,24 @@ services:
       - ./.prod.api.env
     depends_on:
       - postgres
-    networks:
-      - rnrapi
 
-networks:
-  rnrapi:
-    driver: bridge
+  nginx-proxy:
+    restart: always
+    image: jwilder/nginx-proxy
+    ports:
+      - "443:443"
+    volumes:
+      - /etc/nginx/vhost.d
+      - /usr/share/nginx/html
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - /etc/nginx/certs
+    depends_on:
+      - api
+
+    letsencrypt-nginx-proxy-companion:
+      restart: always
+      image: jrcs/letsencrypt-nginx-proxy-companion
+      volumes:
+        - /var/run/docker.sock:/var/run/docker.sock:ro
+      volumes_from:
+        - nginx-proxy
