@@ -166,10 +166,6 @@ func filterWorldAccess(items interface{}, user *models.User) interface{} {
 	return filteredItems.Interface()
 }
 
-func FilterCampaignWorldAccess(campaigns []models.Campaign, user *models.User) []models.Campaign {
-	return filterWorldAccess(campaigns, user).([]models.Campaign)
-}
-
 func IsCampaignGM(campaign *models.Campaign, user *models.User) bool {
 	if user == nil || campaign == nil {
 		return false

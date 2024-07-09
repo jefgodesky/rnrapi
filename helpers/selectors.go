@@ -172,6 +172,7 @@ func GetRoll(c *gin.Context, id string) *models.Roll {
 	result := initializers.DB.
 		Preload(clause.Associations).
 		Preload("Campaign.World").
+		Preload("Table.Author").
 		Where("id = ?", id).First(&roll)
 
 	if result.Error != nil {

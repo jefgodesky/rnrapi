@@ -59,6 +59,7 @@ func main() {
 			authRequired.DELETE("/tables/:slug", controllers.TableDestroy)
 
 			authRequired.GET("/rolls", controllers.RollIndex)
+			authRequired.GET("/rolls/:id", controllers.RollRetrieve)
 		}
 
 		authOptional := v.Group("/")

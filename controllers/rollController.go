@@ -43,3 +43,17 @@ func RollIndex(c *gin.Context) {
 		"rolls":     serializers.SerializeRolls(rolls),
 	})
 }
+
+func RollRetrieve(c *gin.Context) {
+	roll := helpers.GetRollFromID(c)
+	user := helpers.GetUserFromContext(c, false)
+	isRoller := roll.Roller.ID == user.ID
+	isGM := helpers.IsCampaignGM(roll.Campaign, user)
+
+	if !isRoller && !isGM {
+		c.JSON(403, gin.H{"error": "Forbidden"})
+		return
+	}
+
+	c.JSON(200, serializers.SerializeRoll(*roll))
+}
