@@ -60,6 +60,7 @@ func main() {
 
 			authRequired.GET("/rolls", controllers.RollIndex)
 			authRequired.GET("/rolls/:id", controllers.RollRetrieve)
+			authRequired.DELETE("/rolls/:id", controllers.RollDestroy)
 		}
 
 		authOptional := v.Group("/")

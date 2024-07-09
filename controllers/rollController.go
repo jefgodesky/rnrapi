@@ -46,12 +46,39 @@ func RollIndex(c *gin.Context) {
 
 func RollRetrieve(c *gin.Context) {
 	roll := helpers.GetRollFromID(c)
+	if roll == nil {
+		return
+	}
+
 	user := helpers.GetUserFromContext(c, false)
 	isRoller := roll.Roller.ID == user.ID
 	isGM := helpers.IsCampaignGM(roll.Campaign, user)
 
 	if !isRoller && !isGM {
 		c.JSON(403, gin.H{"error": "Forbidden"})
+		return
+	}
+
+	c.JSON(200, serializers.SerializeRoll(*roll))
+}
+
+func RollDestroy(c *gin.Context) {
+	roll := helpers.GetRollFromID(c)
+	if roll == nil {
+		return
+	}
+
+	user := helpers.GetUserFromContext(c, false)
+	isRoller := roll.Roller.ID == user.ID
+	isGM := helpers.IsCampaignGM(roll.Campaign, user)
+
+	if !isRoller && !isGM {
+		c.JSON(403, gin.H{"error": "Forbidden"})
+		return
+	}
+
+	if err := initializers.DB.Delete(&roll).Error; err != nil {
+		c.JSON(500, gin.H{"Error": "Failed to destroy roll"})
 		return
 	}
 
