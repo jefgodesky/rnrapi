@@ -1,0 +1,35 @@
+volumes:
+  rnrapi_prod_postgres_data: {}
+
+services:
+  postgres:
+    image: postgres:14-alpine
+    container_name: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - rnrapi_prod_postgres_data:/var/lib/postgresql/data
+      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+    env_file:
+      - ./.prod.postgres.env
+    networks:
+      - rnrapi
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: api
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./.prod.postgres.env
+      - ./.prod.api.env
+    depends_on:
+      - postgres
+    networks:
+      - rnrapi
+
+networks:
+  rnrapi:
+    driver: bridge

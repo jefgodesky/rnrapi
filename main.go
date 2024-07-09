@@ -24,7 +24,7 @@ func main() {
 	if err := r.SetTrustedProxies(trustedProxies); err != nil {
 		log.Fatalf("Failed to set trusted proxies: %v", err)
 	}
-	
+
 	v := r.Group(apiVersion)
 	{
 		v.POST("/users", controllers.UserCreate)
