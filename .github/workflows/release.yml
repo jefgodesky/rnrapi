@@ -5,6 +5,10 @@ on:
     types: [created]
   workflow_dispatch:
 
+env:
+  REGISTRY: ghcr.io
+  PACKAGE: ghcr.io/${{ github.repository }}:latest
+
 jobs:
   deploy:
     name: Deploy
@@ -20,8 +24,8 @@ jobs:
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
-          registry: ghcr.io
-          username: ${{ secrets.GITHUB_ACTOR }}
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push Docker image
@@ -29,7 +33,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ github.repository }}/rnrapi:latest
+          tags: ${{ env.PACKAGE }}
 
       - name: SSH and deploy to Droplet
         uses: appleboy/ssh-action@master
@@ -38,7 +42,6 @@ jobs:
           username: ${{ secrets.DROPLET_USER }}
           key: ${{ secrets.DROPLET_SSH_KEY }}
           script: |
-            docker pull ghcr.io/${{ github.repository }}/rnrapi:latest
-            docker stop rnrapi || true
-            docker rm rnrapi || true
-            docker run -d --name rnrapi -p 80:3000 ghcr.io/${{ github.repository }}/rnrapi:latest
+            cd ~
+            docker compose -f prod.yml down
+            docker compose -f prod.yml up -d --build
