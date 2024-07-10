@@ -1,5 +1,8 @@
 volumes:
   rnrapi_prod_postgres_data: {}
+  nginx_certs: {}
+  nginx_vhost: {}
+  nginx_html: {}
 
 services:
   postgres:
@@ -27,12 +30,13 @@ services:
     restart: always
     image: jwilder/nginx-proxy
     ports:
+      - "80:80"
       - "443:443"
     volumes:
-      - /etc/nginx/vhost.d
-      - /usr/share/nginx/html
       - /var/run/docker.sock:/tmp/docker.sock:ro
-      - /etc/nginx/certs
+      - nginx_certs:/etc/nginx/certs
+      - nginx_vhost:/etc/nginx/vhost.d
+      - nginx_html:/usr/share/nginx/html
     depends_on:
       - api
 
@@ -41,5 +45,6 @@ services:
     image: jrcs/letsencrypt-nginx-proxy-companion
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      - nginx_certs:/etc/nginx/certs
     volumes_from:
       - nginx-proxy
