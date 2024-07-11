@@ -2,6 +2,7 @@ package middlewares
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/jefgodesky/rnrapi/helpers"
 	"github.com/jefgodesky/rnrapi/initializers"
 	"github.com/jefgodesky/rnrapi/models"
 	"strings"
@@ -30,9 +31,21 @@ func getUserFromAPIKey(c *gin.Context, required bool) {
 	}
 	token, secret := parts[0], parts[1]
 
-	var user models.User
-	result := initializers.DB.Where("token = ?", token).First(&user)
+	var key models.Key
+	result := initializers.DB.
+		Preload("User").
+		Where("token = ?", token).First(&key)
 	if result.Error != nil {
+		if required {
+			c.JSON(401, gin.H{"error": "Invalid API key"})
+			c.Abort()
+			return
+		}
+		c.Next()
+		return
+	}
+
+	if err := helpers.CheckHash(secret, key.Secret); err != nil {
 		if required == true {
 			c.JSON(401, gin.H{"error": "Invalid API key"})
 			c.Abort()
@@ -41,16 +54,8 @@ func getUserFromAPIKey(c *gin.Context, required bool) {
 		return
 	}
 
-	if err := models.CheckAPIKey(secret, user.Secret); err != nil {
-		if required == true {
-			c.JSON(401, gin.H{"error": "Invalid API key"})
-			c.Abort()
-		}
-		c.Next()
-		return
-	}
-
-	c.Set("user", &user)
+	c.Set("keyID", key.ID)
+	c.Set("user", &key.User)
 	c.Next()
 }
 

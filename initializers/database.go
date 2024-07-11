@@ -28,6 +28,7 @@ func ConnectToDB() {
 func MigrateDB() error {
 	err := DB.AutoMigrate(
 		&models.User{},
+		&models.Key{},
 		&models.World{},
 		&models.Campaign{},
 		&models.Species{},

@@ -13,7 +13,7 @@ func GenerateAPIKey(c *gin.Context) (string, string, string) {
 		return "", "", ""
 	}
 
-	hash, err := models.HashAPIKey(secret)
+	hash, err := Hash(secret)
 	if err != nil {
 		c.JSON(400, gin.H{"error": "Failed to hash API key"})
 		c.Abort()

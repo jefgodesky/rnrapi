@@ -52,3 +52,8 @@ func GetRollFromID(c *gin.Context) *models.Roll {
 	id := c.Param("id")
 	return GetRoll(c, id)
 }
+
+func GetKeyFromID(c *gin.Context) *models.Key {
+	id := c.Param("id")
+	return GetKey(c, id)
+}

@@ -11,17 +11,19 @@ import (
 )
 
 func UserCreate(c *gin.Context) {
-	username, name, bio := helpers.BodyToUserFields(c)
-	if username == "" || name == "" || bio == "" {
+	username, password, name, bio := helpers.BodyToUserFields(c)
+	if username == "" || password == "" || name == "" || bio == "" {
 		return
 	}
 
-	token, hash, key := helpers.GenerateAPIKey(c)
-	if token == "" || hash == "" || key == "" {
+	hash, err := helpers.Hash(password)
+	if err != nil {
+		c.JSON(500, gin.H{"error": "Failed to hash password"})
+		c.Abort()
 		return
 	}
 
-	user := models.User{Username: username, Name: name, Bio: bio, Token: token, Secret: hash, Active: true}
+	user := models.User{Username: username, Password: hash, Name: name, Bio: bio, Active: true}
 	result := initializers.DB.Create(&user)
 	if result.Error != nil {
 		usernameError := "duplicate key value violates unique constraint"
@@ -30,12 +32,29 @@ func UserCreate(c *gin.Context) {
 		} else {
 			c.JSON(400, gin.H{"error": "Failed to create user"})
 		}
+		c.Abort()
 		return
 	}
 
+	token, secret, err := models.GenerateAPIKey()
+	if err != nil {
+		c.JSON(500, gin.H{"error": "Failed to generate API key"})
+		c.Abort()
+		return
+	}
+
+	key := models.Key{Token: token, Secret: secret, User: user, Label: "Registration key", Ephemeral: true}
+	result = initializers.DB.Create(&key)
+	if result.Error != nil {
+		c.JSON(500, gin.H{"error": "Failed to generate API key"})
+		c.Abort()
+		return
+	}
+
+	plaintext := token + "." + secret
 	location := fmt.Sprintf("/v1/users/%s", user.Username)
 	c.Header("Location", location)
-	c.JSON(200, serializers.SerializeUser(user, &key))
+	c.JSON(200, serializers.SerializeUser(user, &key, &plaintext))
 }
 
 func UserIndex(c *gin.Context) {
@@ -57,11 +76,11 @@ func UserRetrieve(c *gin.Context) {
 	if user == nil {
 		return
 	}
-	c.JSON(200, serializers.SerializeUser(*user, nil))
+	c.JSON(200, serializers.SerializeUser(*user, nil, nil))
 }
 
 func UserUpdate(c *gin.Context) {
-	username, name, bio := helpers.BodyToUserFields(c)
+	username, password, name, bio := helpers.BodyToUserFields(c)
 	if username == "" || name == "" || bio == "" {
 		return
 	}
@@ -71,10 +90,32 @@ func UserUpdate(c *gin.Context) {
 	user.Name = name
 	user.Bio = bio
 
+	if &password != nil {
+		hash, err := helpers.Hash(password)
+		if err != nil {
+			c.JSON(500, gin.H{"error": "Failed to hash password"})
+			c.Abort()
+			return
+		}
+
+		user.Password = hash
+	}
+
 	if err := initializers.DB.Save(user).Error; err != nil {
 		c.JSON(500, gin.H{"Error": "Failed to update user"})
 		return
 	}
 
-	c.JSON(200, serializers.SerializeUser(*user, nil))
+	c.JSON(200, serializers.SerializeUser(*user, nil, nil))
+}
+
+func UserDestroy(c *gin.Context) {
+	user := helpers.GetUserFromContext(c, true)
+
+	if err := initializers.DB.Delete(user).Error; err != nil {
+		c.JSON(500, gin.H{"Error": "Failed to delete user"})
+		return
+	}
+
+	c.JSON(200, serializers.SerializeUser(*user, nil, nil))
 }

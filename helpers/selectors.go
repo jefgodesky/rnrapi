@@ -186,3 +186,23 @@ func GetRoll(c *gin.Context, id string) *models.Roll {
 
 	return &roll
 }
+
+func GetKey(c *gin.Context, id string) *models.Key {
+	var key models.Key
+	result := initializers.DB.
+		Preload(clause.Associations).
+		Where("id = ?", id).First(&key)
+
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			c.JSON(404, gin.H{"error": fmt.Sprintf("Key #%s not found", id)})
+			c.Abort()
+			return nil
+		}
+		c.JSON(500, gin.H{"error": "Failed to retrieve roll"})
+		c.Abort()
+		return nil
+	}
+
+	return &key
+}

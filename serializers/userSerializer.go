@@ -10,8 +10,8 @@ type SerializedUser struct {
 	Name       string          `json:"name"`
 	Bio        string          `json:"bio"`
 	Characters []CharacterStub `json:"characters"`
-	APIKey     *string         `json:"api_key,omitempty"`
 	Active     bool            `json:"active"`
+	APIKey     *SerializedKey  `json:"api_key"`
 }
 
 type UserStub struct {
@@ -20,7 +20,7 @@ type UserStub struct {
 	Path     string `json:"path"`
 }
 
-func SerializeUser(user models.User, apiKey *string) SerializedUser {
+func SerializeUser(user models.User, key *models.Key, keyval *string) SerializedUser {
 	var pcs []models.Character
 	initializers.DB.Where("player_id = ? AND pc = ? AND public = ?", user.ID, true, true).Find(&pcs)
 
@@ -29,7 +29,7 @@ func SerializeUser(user models.User, apiKey *string) SerializedUser {
 		characters[i] = StubCharacter(pc)
 	}
 
-	serializedUser := SerializedUser{
+	serialized := SerializedUser{
 		Username:   user.Username,
 		Name:       user.Name,
 		Bio:        user.Bio,
@@ -37,11 +37,12 @@ func SerializeUser(user models.User, apiKey *string) SerializedUser {
 		Active:     user.Active,
 	}
 
-	if apiKey != nil {
-		serializedUser.APIKey = apiKey
+	if key != nil && keyval != nil {
+		sk := SerializeKey(*key, keyval)
+		serialized.APIKey = &sk
 	}
 
-	return serializedUser
+	return serialized
 }
 
 func StubUser(user models.User) UserStub {

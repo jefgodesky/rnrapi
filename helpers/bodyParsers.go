@@ -10,6 +10,7 @@ import (
 	"github.com/jefgodesky/rnrapi/models"
 	"gorm.io/gorm"
 	"strings"
+	"time"
 )
 
 func UsernamesToUsers(usernames []string) []models.User {
@@ -46,19 +47,53 @@ func IdsToCharacters(ids []string) []models.Character {
 	return characters
 }
 
-func BodyToUserFields(c *gin.Context) (string, string, string) {
+func BodyToKeyRequest(c *gin.Context) (string, string, string, bool) {
+	var body struct {
+		Username  string
+		Password  string
+		Ephemeral *bool
+		Label     *string
+	}
+
+	label := "Key created at " + time.Now().Format("2006-01-02 15:04:05")
+	if err := c.BindJSON(&body); err != nil {
+		c.JSON(400, gin.H{"error": "Invalid input"})
+		c.Abort()
+		return "", "", label, true
+	}
+
+	ephemeral := true
+	if body.Ephemeral != nil {
+		ephemeral = *body.Ephemeral
+	}
+
+	if body.Label != nil {
+		label = *body.Label
+	}
+
+	return body.Username, body.Password, label, ephemeral
+}
+
+func BodyToUserFields(c *gin.Context) (string, string, string, string) {
 	var body struct {
 		Username string
+		Password *string
 		Name     string
 		Bio      string
 	}
 
 	if err := c.BindJSON(&body); err != nil {
 		c.JSON(400, gin.H{"error": "Invalid input"})
-		return "", "", ""
+		c.Abort()
+		return "", "", "", ""
 	}
 
-	return body.Username, body.Name, body.Bio
+	password := *body.Password
+	if body.Password == nil {
+		password = ""
+	}
+
+	return body.Username, password, body.Name, body.Bio
 }
 
 func BodyToWorld(c *gin.Context) *models.World {

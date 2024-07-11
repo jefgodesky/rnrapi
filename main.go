@@ -40,12 +40,19 @@ func main() {
 		v.HEAD("/users", controllers.UserIndex)
 		v.GET("/users/:username", controllers.UserRetrieve)
 		v.HEAD("/users/:username", controllers.UserRetrieve)
+		v.POST("/keys", controllers.KeyCreate)
 
 		authRequired := v.Group("/")
 		authRequired.Use(middlewares.AuthRequired())
 		{
 			authRequired.PUT("/users", controllers.UserUpdate)
-			authRequired.PUT("/key", controllers.KeyUpdate)
+			authRequired.DELETE("/users", controllers.UserDestroy)
+
+			authRequired.GET("/keys", controllers.KeyIndex)
+			authRequired.HEAD("/keys", controllers.KeyIndex)
+			authRequired.GET("/keys/:id", controllers.KeyRetrieve)
+			authRequired.HEAD("/keys/:id", controllers.KeyRetrieve)
+			authRequired.DELETE("/keys/:id", controllers.KeyDestroy)
 
 			authRequired.POST("/worlds", controllers.WorldCreate)
 			authRequired.PUT("/worlds/:slug", controllers.WorldUpdate)
