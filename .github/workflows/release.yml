@@ -43,5 +43,6 @@ jobs:
           key: ${{ secrets.DROPLET_SSH_KEY }}
           script: |
             cd ~
+            docker compose -f prod.yml pull api
             docker compose -f prod.yml down
             docker compose -f prod.yml up -d --build
