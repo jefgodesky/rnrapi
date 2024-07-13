@@ -61,3 +61,19 @@ func EmailCreate(c *gin.Context) {
 
 	c.JSON(200, serializers.SerializeEmail(*email))
 }
+
+func EmailIndex(c *gin.Context) {
+	user := helpers.GetUserFromContext(c, true)
+	var emails []models.Email
+	query := initializers.DB.Model(&models.Email{}).Where("user_id = ?", user.ID)
+
+	var total int64
+	query.Count(&total)
+	query.Scopes(helpers.Paginate(c)).Find(&emails)
+	c.JSON(200, gin.H{
+		"total":     total,
+		"page":      c.GetInt("page"),
+		"page_size": c.GetInt("page_size"),
+		"emails":    serializers.SerializeEmails(emails),
+	})
+}

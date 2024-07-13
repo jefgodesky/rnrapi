@@ -55,6 +55,8 @@ func main() {
 			authRequired.DELETE("/keys/:id", controllers.KeyDestroy)
 
 			authRequired.POST("/emails", controllers.EmailCreate)
+			authRequired.HEAD("/emails", controllers.EmailIndex)
+			authRequired.GET("/emails", controllers.EmailIndex)
 
 			authRequired.POST("/worlds", controllers.WorldCreate)
 			authRequired.PUT("/worlds/:slug", controllers.WorldUpdate)
