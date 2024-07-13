@@ -36,25 +36,9 @@ func UserCreate(c *gin.Context) {
 		return
 	}
 
-	token, secret, err := models.GenerateAPIKey()
-	if err != nil {
-		c.JSON(500, gin.H{"error": "Failed to generate API key"})
-		c.Abort()
-		return
-	}
-
-	key := models.Key{Token: token, Secret: secret, User: user, Label: "Registration key", Ephemeral: true}
-	result = initializers.DB.Create(&key)
-	if result.Error != nil {
-		c.JSON(500, gin.H{"error": "Failed to generate API key"})
-		c.Abort()
-		return
-	}
-
-	plaintext := token + "." + secret
 	location := fmt.Sprintf("/v1/users/%s", user.Username)
 	c.Header("Location", location)
-	c.JSON(200, serializers.SerializeUser(user, &key, &plaintext))
+	c.JSON(200, serializers.SerializeUser(user))
 }
 
 func UserIndex(c *gin.Context) {
@@ -76,7 +60,7 @@ func UserRetrieve(c *gin.Context) {
 	if user == nil {
 		return
 	}
-	c.JSON(200, serializers.SerializeUser(*user, nil, nil))
+	c.JSON(200, serializers.SerializeUser(*user))
 }
 
 func UserUpdate(c *gin.Context) {
@@ -106,7 +90,7 @@ func UserUpdate(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, serializers.SerializeUser(*user, nil, nil))
+	c.JSON(200, serializers.SerializeUser(*user))
 }
 
 func UserDestroy(c *gin.Context) {
@@ -117,5 +101,5 @@ func UserDestroy(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, serializers.SerializeUser(*user, nil, nil))
+	c.JSON(200, serializers.SerializeUser(*user))
 }
