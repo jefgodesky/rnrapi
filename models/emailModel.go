@@ -14,7 +14,7 @@ type Email struct {
 	User     User   `gorm:"foreignKey:UserID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"user"`
 }
 
-func SetVerificationCode(email Email) {
+func SetVerificationCode(email *Email) {
 	email.Code = uuid.New().String()
 	email.Verified = false
 }

@@ -24,7 +24,7 @@ func BodyToEmail(c *gin.Context) *models.Email {
 		User:    *authUser,
 	}
 
-	models.SetVerificationCode(email)
+	models.SetVerificationCode(&email)
 
 	return &email
 }
