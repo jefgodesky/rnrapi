@@ -57,6 +57,8 @@ func main() {
 			authRequired.POST("/emails", controllers.EmailCreate)
 			authRequired.HEAD("/emails", controllers.EmailIndex)
 			authRequired.GET("/emails", controllers.EmailIndex)
+			authRequired.HEAD("/emails/:id", controllers.EmailRetrieve)
+			authRequired.GET("/emails/:id", controllers.EmailRetrieve)
 
 			authRequired.POST("/worlds", controllers.WorldCreate)
 			authRequired.PUT("/worlds/:slug", controllers.WorldUpdate)

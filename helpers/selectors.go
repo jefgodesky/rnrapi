@@ -199,10 +199,30 @@ func GetKey(c *gin.Context, id string) *models.Key {
 			c.Abort()
 			return nil
 		}
-		c.JSON(500, gin.H{"error": "Failed to retrieve roll"})
+		c.JSON(500, gin.H{"error": "Failed to retrieve key"})
 		c.Abort()
 		return nil
 	}
 
 	return &key
+}
+
+func GetEmail(c *gin.Context, id string) *models.Email {
+	var email models.Email
+	result := initializers.DB.
+		Preload(clause.Associations).
+		Where("id = ?", id).First(&email)
+
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			c.JSON(404, gin.H{"error": fmt.Sprintf("Email #%s not found", id)})
+			c.Abort()
+			return nil
+		}
+		c.JSON(500, gin.H{"error": "Failed to retrieve email"})
+		c.Abort()
+		return nil
+	}
+
+	return &email
 }

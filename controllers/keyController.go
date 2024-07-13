@@ -58,6 +58,15 @@ func KeyIndex(c *gin.Context) {
 
 func KeyRetrieve(c *gin.Context) {
 	key := helpers.GetKeyFromID(c)
+	user := helpers.GetUserFromContext(c, true)
+	if user == nil {
+		return
+	}
+
+	if user.ID != key.UserID {
+		c.JSON(403, gin.H{"error": "Forbidden"})
+	}
+
 	c.JSON(200, serializers.SerializeKey(*key, nil))
 }
 

@@ -57,3 +57,8 @@ func GetKeyFromID(c *gin.Context) *models.Key {
 	id := c.Param("id")
 	return GetKey(c, id)
 }
+
+func GetEmailFromID(c *gin.Context) *models.Email {
+	id := c.Param("id")
+	return GetEmail(c, id)
+}

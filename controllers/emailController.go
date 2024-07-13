@@ -77,3 +77,17 @@ func EmailIndex(c *gin.Context) {
 		"emails":    serializers.SerializeEmails(emails),
 	})
 }
+
+func EmailRetrieve(c *gin.Context) {
+	email := helpers.GetEmailFromID(c)
+	user := helpers.GetUserFromContext(c, true)
+	if user == nil {
+		return
+	}
+
+	if user.ID != email.UserID {
+		c.JSON(403, gin.H{"error": "Forbidden"})
+	}
+
+	c.JSON(200, serializers.SerializeEmail(*email))
+}
