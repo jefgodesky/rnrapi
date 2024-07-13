@@ -111,3 +111,27 @@ func EmailDestroy(c *gin.Context) {
 
 	c.Status(204)
 }
+
+func EmailVerify(c *gin.Context) {
+	code := parsers.BodyToVerification(c)
+	if code == nil {
+		return
+	}
+
+	email := helpers.GetEmailFromID(c)
+	if email.Code != *code {
+		c.JSON(400, gin.H{"error": "Invalid verification code"})
+		c.Abort()
+		return
+	}
+
+	email.Code = ""
+	email.Verified = true
+
+	if err := initializers.DB.Save(email).Error; err != nil {
+		c.JSON(500, gin.H{"Error": "Failed to update email record"})
+		return
+	}
+
+	c.JSON(200, serializers.SerializeEmail(*email))
+}

@@ -7,10 +7,10 @@ import (
 
 func BodyToKeyRequest(c *gin.Context) (string, string, string, bool) {
 	var body struct {
-		Username  string
-		Password  string
-		Ephemeral *bool
-		Label     *string
+		Username  string  `json:"username"`
+		Password  string  `json:"password"`
+		Ephemeral *bool   `json:"ephemeral"`
+		Label     *string `json:"label"`
 	}
 
 	label := "Key created at " + time.Now().Format("2006-01-02 15:04:05")

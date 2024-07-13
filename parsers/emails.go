@@ -8,7 +8,7 @@ import (
 
 func BodyToEmail(c *gin.Context) *models.Email {
 	var body struct {
-		Address string
+		Address string `json:"address"`
 	}
 
 	if err := c.BindJSON(&body); err != nil {
@@ -27,4 +27,18 @@ func BodyToEmail(c *gin.Context) *models.Email {
 	models.SetVerificationCode(&email)
 
 	return &email
+}
+
+func BodyToVerification(c *gin.Context) *string {
+	var body struct {
+		Code string `json:"code"`
+	}
+
+	if err := c.BindJSON(&body); err != nil {
+		c.JSON(400, gin.H{"error": "Invalid input"})
+		c.Abort()
+		return nil
+	}
+
+	return &body.Code
 }
