@@ -59,6 +59,7 @@ func main() {
 			authRequired.GET("/emails", controllers.EmailIndex)
 			authRequired.HEAD("/emails/:id", controllers.EmailRetrieve)
 			authRequired.GET("/emails/:id", controllers.EmailRetrieve)
+			authRequired.DELETE("/emails/:id", controllers.EmailDestroy)
 
 			authRequired.POST("/worlds", controllers.WorldCreate)
 			authRequired.PUT("/worlds/:slug", controllers.WorldUpdate)

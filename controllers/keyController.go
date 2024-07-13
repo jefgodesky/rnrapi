@@ -72,6 +72,15 @@ func KeyRetrieve(c *gin.Context) {
 
 func KeyDestroy(c *gin.Context) {
 	key := helpers.GetKeyFromID(c)
+	user := helpers.GetUserFromContext(c, true)
+	if user == nil {
+		return
+	}
+
+	if user.ID != key.UserID {
+		c.JSON(403, gin.H{"error": "Forbidden"})
+	}
+
 	if err := initializers.DB.Delete(key).Error; err != nil {
 		c.JSON(500, gin.H{"Error": "Failed to delete key"})
 		c.Abort()

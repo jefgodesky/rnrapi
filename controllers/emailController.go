@@ -91,3 +91,23 @@ func EmailRetrieve(c *gin.Context) {
 
 	c.JSON(200, serializers.SerializeEmail(*email))
 }
+
+func EmailDestroy(c *gin.Context) {
+	email := helpers.GetEmailFromID(c)
+	user := helpers.GetUserFromContext(c, true)
+	if user == nil {
+		return
+	}
+
+	if user.ID != email.UserID {
+		c.JSON(403, gin.H{"error": "Forbidden"})
+	}
+
+	if err := initializers.DB.Delete(email).Error; err != nil {
+		c.JSON(500, gin.H{"Error": "Failed to delete key"})
+		c.Abort()
+		return
+	}
+
+	c.Status(204)
+}

@@ -9,7 +9,7 @@ var AllowedMethods = map[string]string{
 	"/v1/characters":             "GET, HEAD, POST",
 	"/v1/characters/:id":         "GET, HEAD, PUT, DELETE",
 	"/v1/emails":                 "GET, HEAD, POST",
-	"/v1/emails/:id":             "GET, HEAD, PUT, DELETE",
+	"/v1/emails/:id":             "GET, HEAD, DELETE",
 	"/v1/keys":                   "GET, HEAD, POST",
 	"/v1/keys/:id":               "GET, HEAD, DELETE",
 	"/v1/rolls":                  "GET, HEAD",
