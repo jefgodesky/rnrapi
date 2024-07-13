@@ -5,11 +5,12 @@ import (
 	"github.com/jefgodesky/rnrapi/helpers"
 	"github.com/jefgodesky/rnrapi/initializers"
 	"github.com/jefgodesky/rnrapi/models"
+	"github.com/jefgodesky/rnrapi/parsers"
 	"github.com/jefgodesky/rnrapi/serializers"
 )
 
 func KeyCreate(c *gin.Context) {
-	username, password, label, ephemeral := helpers.BodyToKeyRequest(c)
+	username, password, label, ephemeral := parsers.BodyToKeyRequest(c)
 	if username == "" || password == "" {
 		return
 	}

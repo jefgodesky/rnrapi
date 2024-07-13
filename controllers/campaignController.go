@@ -5,12 +5,13 @@ import (
 	"github.com/jefgodesky/rnrapi/helpers"
 	"github.com/jefgodesky/rnrapi/initializers"
 	"github.com/jefgodesky/rnrapi/models"
+	"github.com/jefgodesky/rnrapi/parsers"
 	"github.com/jefgodesky/rnrapi/serializers"
 	"gorm.io/gorm/clause"
 )
 
 func CampaignCreate(c *gin.Context) {
-	campaign := helpers.BodyToCampaign(c)
+	campaign := parsers.BodyToCampaign(c)
 
 	if result := initializers.DB.Create(&campaign); result.Error != nil {
 		c.JSON(500, gin.H{"error": "Failed to create campaign"})
@@ -66,7 +67,7 @@ func CampaignUpdate(c *gin.Context) {
 		return
 	}
 
-	newCampaign := helpers.BodyToCampaign(c)
+	newCampaign := parsers.BodyToCampaign(c)
 	campaign.Slug = newCampaign.Slug
 	campaign.Name = newCampaign.Name
 	campaign.Description = newCampaign.Description

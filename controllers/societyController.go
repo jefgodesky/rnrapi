@@ -5,12 +5,13 @@ import (
 	"github.com/jefgodesky/rnrapi/helpers"
 	"github.com/jefgodesky/rnrapi/initializers"
 	"github.com/jefgodesky/rnrapi/models"
+	"github.com/jefgodesky/rnrapi/parsers"
 	"github.com/jefgodesky/rnrapi/serializers"
 	"gorm.io/gorm/clause"
 )
 
 func SocietyCreate(c *gin.Context) {
-	society := helpers.BodyToSociety(c)
+	society := parsers.BodyToSociety(c)
 	if society == nil {
 		return
 	}
@@ -69,7 +70,7 @@ func SocietyUpdate(c *gin.Context) {
 		return
 	}
 
-	newSociety := helpers.BodyToSociety(c)
+	newSociety := parsers.BodyToSociety(c)
 	society.Slug = newSociety.Slug
 	society.Name = newSociety.Name
 	society.Description = newSociety.Description

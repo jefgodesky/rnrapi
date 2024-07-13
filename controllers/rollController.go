@@ -5,11 +5,12 @@ import (
 	"github.com/jefgodesky/rnrapi/helpers"
 	"github.com/jefgodesky/rnrapi/initializers"
 	"github.com/jefgodesky/rnrapi/models"
+	"github.com/jefgodesky/rnrapi/parsers"
 	"github.com/jefgodesky/rnrapi/serializers"
 )
 
 func RollCreate(c *gin.Context) {
-	roll := helpers.BodyToRoll(c)
+	roll := parsers.BodyToRoll(c)
 	if roll == nil {
 		return
 	}

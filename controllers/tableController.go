@@ -5,12 +5,13 @@ import (
 	"github.com/jefgodesky/rnrapi/helpers"
 	"github.com/jefgodesky/rnrapi/initializers"
 	"github.com/jefgodesky/rnrapi/models"
+	"github.com/jefgodesky/rnrapi/parsers"
 	"github.com/jefgodesky/rnrapi/serializers"
 	"gorm.io/gorm/clause"
 )
 
 func TableCreate(c *gin.Context) {
-	table := helpers.BodyToTable(c)
+	table := parsers.BodyToTable(c)
 
 	if result := initializers.DB.Create(&table); result.Error != nil {
 		c.JSON(500, gin.H{"error": "Failed to create table"})
@@ -64,7 +65,7 @@ func TableUpdate(c *gin.Context) {
 		return
 	}
 
-	newTable := helpers.BodyToTable(c)
+	newTable := parsers.BodyToTable(c)
 	table.Name = newTable.Name
 	table.Slug = newTable.Slug
 	table.Description = newTable.Description

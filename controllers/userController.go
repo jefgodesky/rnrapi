@@ -6,12 +6,13 @@ import (
 	"github.com/jefgodesky/rnrapi/helpers"
 	"github.com/jefgodesky/rnrapi/initializers"
 	"github.com/jefgodesky/rnrapi/models"
+	"github.com/jefgodesky/rnrapi/parsers"
 	"github.com/jefgodesky/rnrapi/serializers"
 	"strings"
 )
 
 func UserCreate(c *gin.Context) {
-	username, password, name, bio := helpers.BodyToUserFields(c)
+	username, password, name, bio := parsers.BodyToUserFields(c)
 	if username == "" || password == "" || name == "" || bio == "" {
 		return
 	}
@@ -64,7 +65,7 @@ func UserRetrieve(c *gin.Context) {
 }
 
 func UserUpdate(c *gin.Context) {
-	username, password, name, bio := helpers.BodyToUserFields(c)
+	username, password, name, bio := parsers.BodyToUserFields(c)
 	if username == "" || name == "" || bio == "" {
 		return
 	}

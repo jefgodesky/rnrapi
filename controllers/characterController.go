@@ -5,12 +5,13 @@ import (
 	"github.com/jefgodesky/rnrapi/helpers"
 	"github.com/jefgodesky/rnrapi/initializers"
 	"github.com/jefgodesky/rnrapi/models"
+	"github.com/jefgodesky/rnrapi/parsers"
 	"github.com/jefgodesky/rnrapi/serializers"
 	"gorm.io/gorm/clause"
 )
 
 func CharacterCreate(c *gin.Context) {
-	character := helpers.BodyToCharacter(c)
+	character := parsers.BodyToCharacter(c)
 	if character == nil {
 		return
 	}
@@ -69,7 +70,7 @@ func CharacterUpdate(c *gin.Context) {
 		return
 	}
 
-	newChar := helpers.BodyToCharacter(c)
+	newChar := parsers.BodyToCharacter(c)
 	char.Name = newChar.Name
 	char.Description = newChar.Description
 	char.Str = newChar.Str

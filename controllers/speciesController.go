@@ -5,12 +5,13 @@ import (
 	"github.com/jefgodesky/rnrapi/helpers"
 	"github.com/jefgodesky/rnrapi/initializers"
 	"github.com/jefgodesky/rnrapi/models"
+	"github.com/jefgodesky/rnrapi/parsers"
 	"github.com/jefgodesky/rnrapi/serializers"
 	"gorm.io/gorm/clause"
 )
 
 func SpeciesCreate(c *gin.Context) {
-	species := helpers.BodyToSpecies(c)
+	species := parsers.BodyToSpecies(c)
 	if species == nil {
 		return
 	}
@@ -70,7 +71,7 @@ func SpeciesUpdate(c *gin.Context) {
 		return
 	}
 
-	newSpecies := helpers.BodyToSpecies(c)
+	newSpecies := parsers.BodyToSpecies(c)
 	species.Slug = newSpecies.Slug
 	species.Name = newSpecies.Name
 	species.Description = newSpecies.Description

@@ -5,11 +5,12 @@ import (
 	"github.com/jefgodesky/rnrapi/helpers"
 	"github.com/jefgodesky/rnrapi/initializers"
 	"github.com/jefgodesky/rnrapi/models"
+	"github.com/jefgodesky/rnrapi/parsers"
 	"github.com/jefgodesky/rnrapi/serializers"
 )
 
 func WorldCreate(c *gin.Context) {
-	world := helpers.BodyToWorld(c)
+	world := parsers.BodyToWorld(c)
 
 	if result := initializers.DB.Create(&world); result.Error != nil {
 		c.JSON(500, gin.H{"error": "Failed to create world"})
@@ -61,7 +62,7 @@ func WorldUpdate(c *gin.Context) {
 		return
 	}
 
-	newWorld := helpers.BodyToWorld(c)
+	newWorld := parsers.BodyToWorld(c)
 	world.Name = newWorld.Name
 	world.Slug = newWorld.Slug
 	world.Public = newWorld.Public

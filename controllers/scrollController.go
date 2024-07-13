@@ -6,11 +6,12 @@ import (
 	"github.com/jefgodesky/rnrapi/helpers"
 	"github.com/jefgodesky/rnrapi/initializers"
 	"github.com/jefgodesky/rnrapi/models"
+	"github.com/jefgodesky/rnrapi/parsers"
 	"github.com/jefgodesky/rnrapi/serializers"
 )
 
 func ScrollCreate(c *gin.Context) {
-	scroll := helpers.BodyToScroll(c)
+	scroll := parsers.BodyToScroll(c)
 
 	if result := initializers.DB.Create(&scroll); result.Error != nil {
 		c.JSON(500, gin.H{"error": "Failed to create scroll"})
@@ -63,7 +64,7 @@ func ScrollUpdate(c *gin.Context) {
 		return
 	}
 
-	newScroll := helpers.BodyToScroll(c)
+	newScroll := parsers.BodyToScroll(c)
 	scroll.Name = newScroll.Name
 	scroll.Description = newScroll.Description
 	scroll.Seals = newScroll.Seals
