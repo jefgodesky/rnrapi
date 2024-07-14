@@ -33,7 +33,7 @@ func SendVerificationEmail(email models.Email) error {
 	lines[11] = "email reached you, so we know where to send your new password"
 	lines[12] = "if you should ever need it."
 	lines[13] = ""
-	lines[14] = fmt.Sprintf("https://ruinsandrevolutions.com/verify/%s,", email.Code)
+	lines[14] = fmt.Sprintf("https://ruinsandrevolutions.com/verify/%s-%s,", email.Code, email.ID)
 
 	return helpers.SendEmail(from, to, subject, strings.Join(lines, "\n"))
 }
