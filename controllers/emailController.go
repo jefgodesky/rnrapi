@@ -33,7 +33,7 @@ func SendVerificationEmail(email models.Email) error {
 	lines[11] = "email reached you, so we know where to send your new password"
 	lines[12] = "if you should ever need it."
 	lines[13] = ""
-	lines[14] = fmt.Sprintf("https://ruinsandrevolutions.com/verify/%s-%s,", email.Code, email.ID)
+	lines[14] = fmt.Sprintf("https://ruinsandrevolutions.com/verify/%s-%d", email.Code, email.ID)
 
 	return helpers.SendEmail(from, to, subject, strings.Join(lines, "\n"))
 }
@@ -53,7 +53,6 @@ func EmailCreate(c *gin.Context) {
 
 	err := SendVerificationEmail(*email)
 	if err != nil {
-		fmt.Println(err)
 		c.JSON(500, gin.H{"error": "Failed to send verification code email."})
 		c.Abort()
 		return
