@@ -45,6 +45,13 @@ func UserCreate(c *gin.Context) {
 func UserIndex(c *gin.Context) {
 	var users []models.User
 	query := initializers.DB.Model(&models.User{}).Where("active = ?", true)
+
+	q := c.Query("q")
+	if q != "" {
+		likePattern := "%" + q + "%"
+		query = query.Where("name LIKE ? OR username LIKE ?", likePattern, likePattern)
+	}
+
 	var total int64
 	query.Count(&total)
 	query.Scopes(helpers.Paginate(c)).Find(&users)
