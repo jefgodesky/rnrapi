@@ -13,6 +13,7 @@ var AllowedMethods = map[string]string{
 	"/v1/emails/:id/verification": "POST",
 	"/v1/keys":                    "GET, HEAD, POST",
 	"/v1/keys/:id":                "GET, HEAD, DELETE",
+	"/v1/password-reset":          "POST",
 	"/v1/rolls":                   "GET, HEAD",
 	"/v1/rolls/:id":               "GET, HEAD, DELETE",
 	"/v1/scrolls":                 "GET, HEAD",

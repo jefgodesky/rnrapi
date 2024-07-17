@@ -104,3 +104,72 @@ func UserDestroy(c *gin.Context) {
 
 	c.JSON(200, serializers.SerializeUser(*user))
 }
+
+func SendPasswordRestEmail(email string, password string) error {
+	from := "The Ruins & Revolutions Catalogue <catalogue@ruinsandrevolutions.com>"
+	to := email
+	subject := "Your password has been reset"
+
+	lines := make([]string, 15)
+	lines[0] = "Your password has been reset. Your new password is:"
+	lines[1] = ""
+	lines[2] = password
+	lines[3] = ""
+	lines[4] = "Visit https://ruinsandrevolutions.com/login to log in with your"
+	lines[5] = "new password. Once logged in, you can change it by going to"
+	lines[6] = "https://ruinsandrevolutions.com/profile"
+
+	return helpers.SendEmail(from, to, subject, strings.Join(lines, "\n"))
+}
+
+func PasswordReset(c *gin.Context) {
+	message := gin.H{"error": "Reset request received."}
+	var body struct {
+		Address string `json:"address"`
+	}
+
+	if err := c.BindJSON(&body); err != nil {
+		c.JSON(400, gin.H{"error": "Invalid input"})
+		c.Abort()
+		return
+	}
+
+	var user models.User
+	result := initializers.DB.
+		Joins("JOIN emails ON emails.user_id = users.id").
+		Where("emails.address = ? AND emails.verified = ?", body.Address, true).
+		First(&user)
+
+	if result.Error == nil {
+		password, err := helpers.GeneratePassword(20)
+		if err != nil {
+			c.JSON(200, message)
+			c.Abort()
+			return
+		}
+
+		hash, err := helpers.Hash(password)
+		if err != nil {
+			c.JSON(200, message)
+			c.Abort()
+			return
+		}
+
+		user.Password = hash
+
+		if err = initializers.DB.Save(user).Error; err != nil {
+			c.JSON(200, message)
+			c.Abort()
+			return
+		}
+
+		err = SendPasswordRestEmail(body.Address, password)
+		if err != nil {
+			c.JSON(200, message)
+			c.Abort()
+			return
+		}
+	}
+
+	c.JSON(200, message)
+}

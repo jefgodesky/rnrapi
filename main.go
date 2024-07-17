@@ -41,6 +41,7 @@ func main() {
 		v.GET("/users/:username", controllers.UserRetrieve)
 		v.HEAD("/users/:username", controllers.UserRetrieve)
 		v.POST("/keys", controllers.KeyCreate)
+		v.POST("/password-reset", controllers.PasswordReset)
 
 		authRequired := v.Group("/")
 		authRequired.Use(middlewares.AuthRequired())

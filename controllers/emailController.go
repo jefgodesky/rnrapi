@@ -15,7 +15,6 @@ func SendVerificationEmail(email models.Email) error {
 	from := "The Ruins & Revolutions Catalogue <catalogue@ruinsandrevolutions.com>"
 	to := email.Address
 	subject := "Please verify this address"
-	fmt.Println(email)
 
 	initializers.DB.Where("id = ?", email.UserID).First(&email.User)
 	lines := make([]string, 15)
