@@ -30,10 +30,10 @@ func UsernamesToUsersWithDefault(usernames []string, defaultUser models.User) []
 
 func BodyToUserFields(c *gin.Context) (string, string, string, string) {
 	var body struct {
-		Username string
-		Password *string
-		Name     string
-		Bio      string
+		Username string  `json:"username" binding:"required"`
+		Password *string `json:"password"`
+		Name     string  `json:"name" binding:"required"`
+		Bio      string  `json:"bio" binding:"required"`
 	}
 
 	if err := c.BindJSON(&body); err != nil {
@@ -42,9 +42,9 @@ func BodyToUserFields(c *gin.Context) (string, string, string, string) {
 		return "", "", "", ""
 	}
 
-	password := *body.Password
-	if body.Password == nil {
-		password = ""
+	password := ""
+	if body.Password != nil {
+		password = *body.Password
 	}
 
 	return body.Username, password, body.Name, body.Bio

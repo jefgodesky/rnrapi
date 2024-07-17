@@ -75,7 +75,7 @@ func UserUpdate(c *gin.Context) {
 	user.Name = name
 	user.Bio = bio
 
-	if &password != nil {
+	if len(password) > 0 {
 		hash, err := helpers.Hash(password)
 		if err != nil {
 			c.JSON(500, gin.H{"error": "Failed to hash password"})
@@ -88,6 +88,7 @@ func UserUpdate(c *gin.Context) {
 
 	if err := initializers.DB.Save(user).Error; err != nil {
 		c.JSON(500, gin.H{"Error": "Failed to update user"})
+		c.Abort()
 		return
 	}
 
