@@ -1,11 +1,13 @@
 package main
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/jefgodesky/rnrapi/controllers"
 	"github.com/jefgodesky/rnrapi/initializers"
 	"github.com/jefgodesky/rnrapi/middlewares"
 	"log"
+	"time"
 )
 
 const apiVersion = "/v1"
@@ -22,6 +24,13 @@ func Root(c *gin.Context) {
 func main() {
 	r := gin.Default()
 	r.Use(middlewares.AllowHeaderMiddleware())
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{"GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 
 	trustedProxies := []string{
 		"127.0.0.1",
