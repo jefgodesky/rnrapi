@@ -17,8 +17,9 @@ type SerializedWorld struct {
 }
 
 type WorldStub struct {
-	Name string `json:"name"`
-	Path string `json:"path"`
+	Name        string `json:"name"`
+	Path        string `json:"path"`
+	Description string `json:"description"`
 }
 
 func SerializeWorld(world models.World) SerializedWorld {
@@ -62,8 +63,9 @@ func SerializeWorld(world models.World) SerializedWorld {
 func StubWorld(world models.World) WorldStub {
 	serialized := SerializeWorld(world)
 	return WorldStub{
-		Name: serialized.Name,
-		Path: "/worlds/" + world.Slug,
+		Name:        serialized.Name,
+		Path:        "/worlds/" + world.Slug,
+		Description: world.Description,
 	}
 }
 
