@@ -10,7 +10,7 @@ type SerializedWorld struct {
 	Slug        string         `json:"slug"`
 	Description string         `json:"description"`
 	Public      bool           `json:"public"`
-	Creators    []string       `json:"creators"`
+	Creators    []UserStub     `json:"creators"`
 	Species     []SpeciesStub  `json:"species"`
 	Societies   []SocietyStub  `json:"societies"`
 	Campaigns   []CampaignStub `json:"campaigns"`
@@ -24,9 +24,13 @@ type WorldStub struct {
 }
 
 func SerializeWorld(world models.World) SerializedWorld {
-	creators := UsersToUsernames(world.Creators)
 	var campaigns []models.Campaign
 	initializers.DB.Where("world_id = ?", world.ID).Preload("GMs").Find(&campaigns)
+
+	creators := make([]UserStub, len(world.Creators))
+	for i, creator := range world.Creators {
+		creators[i] = StubUser(creator)
+	}
 
 	serializedCampaigns := make([]CampaignStub, len(campaigns))
 	for i, campaign := range campaigns {
@@ -63,16 +67,11 @@ func SerializeWorld(world models.World) SerializedWorld {
 
 func StubWorld(world models.World) WorldStub {
 	serialized := SerializeWorld(world)
-	creators := make([]UserStub, len(world.Creators))
-	for i, creator := range world.Creators {
-		creators[i] = StubUser(creator)
-	}
-
 	return WorldStub{
 		Name:        serialized.Name,
 		Path:        "/worlds/" + world.Slug,
 		Description: world.Description,
-		Creators:    creators,
+		Creators:    serialized.Creators,
 	}
 }
 

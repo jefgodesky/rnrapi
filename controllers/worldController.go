@@ -7,6 +7,7 @@ import (
 	"github.com/jefgodesky/rnrapi/models"
 	"github.com/jefgodesky/rnrapi/parsers"
 	"github.com/jefgodesky/rnrapi/serializers"
+	"gorm.io/gorm/clause"
 )
 
 func WorldCreate(c *gin.Context) {
@@ -26,7 +27,7 @@ func WorldCreate(c *gin.Context) {
 func WorldIndex(c *gin.Context) {
 	var worlds []models.World
 	user := helpers.GetUserFromContext(c, false)
-	query := initializers.DB.Model(&models.World{})
+	query := initializers.DB.Model(&models.World{}).Preload(clause.Associations)
 
 	if user != nil {
 		query.Where("public = ? OR id in (SELECT world_id FROM world_creators WHERE user_id = ?)", true, user.ID)
