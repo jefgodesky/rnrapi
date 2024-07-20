@@ -17,9 +17,10 @@ type SerializedWorld struct {
 }
 
 type WorldStub struct {
-	Name        string `json:"name"`
-	Path        string `json:"path"`
-	Description string `json:"description"`
+	Name        string     `json:"name"`
+	Path        string     `json:"path"`
+	Description string     `json:"description"`
+	Creators    []UserStub `json:"creators"`
 }
 
 func SerializeWorld(world models.World) SerializedWorld {
@@ -62,10 +63,16 @@ func SerializeWorld(world models.World) SerializedWorld {
 
 func StubWorld(world models.World) WorldStub {
 	serialized := SerializeWorld(world)
+	creators := make([]UserStub, len(world.Creators))
+	for i, creator := range world.Creators {
+		creators[i] = StubUser(creator)
+	}
+
 	return WorldStub{
 		Name:        serialized.Name,
 		Path:        "/worlds/" + world.Slug,
 		Description: world.Description,
+		Creators:    creators,
 	}
 }
 
