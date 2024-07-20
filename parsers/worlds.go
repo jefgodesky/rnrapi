@@ -9,10 +9,11 @@ import (
 
 func BodyToWorld(c *gin.Context) *models.World {
 	var body struct {
-		Name     string   `json:"name"`
-		Slug     string   `json:"slug"`
-		Public   *bool    `json:"public"`
-		Creators []string `json:"creators"`
+		Name        string   `json:"name"`
+		Slug        string   `json:"slug"`
+		Description string   `json:"description"`
+		Public      *bool    `json:"public"`
+		Creators    []string `json:"creators"`
 	}
 
 	if err := c.Bind(&body); err != nil {
@@ -34,10 +35,11 @@ func BodyToWorld(c *gin.Context) *models.World {
 	creators := UsernamesToUsersWithDefault(body.Creators, *authUser)
 
 	world := models.World{
-		Name:     body.Name,
-		Slug:     worldSlug,
-		Public:   isPublic,
-		Creators: creators,
+		Name:        body.Name,
+		Slug:        worldSlug,
+		Description: body.Description,
+		Public:      isPublic,
+		Creators:    creators,
 	}
 
 	return &world

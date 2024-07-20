@@ -11,6 +11,9 @@ import (
 
 func WorldCreate(c *gin.Context) {
 	world := parsers.BodyToWorld(c)
+	if world == nil {
+		return
+	}
 
 	if result := initializers.DB.Create(&world); result.Error != nil {
 		c.JSON(500, gin.H{"error": "Failed to create world"})

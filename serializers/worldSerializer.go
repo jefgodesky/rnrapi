@@ -6,13 +6,14 @@ import (
 )
 
 type SerializedWorld struct {
-	Name      string         `json:"name"`
-	Slug      string         `json:"slug"`
-	Public    bool           `json:"public"`
-	Creators  []string       `json:"creators"`
-	Species   []SpeciesStub  `json:"species"`
-	Societies []SocietyStub  `json:"societies"`
-	Campaigns []CampaignStub `json:"campaigns"`
+	Name        string         `json:"name"`
+	Slug        string         `json:"slug"`
+	Description string         `json:"description"`
+	Public      bool           `json:"public"`
+	Creators    []string       `json:"creators"`
+	Species     []SpeciesStub  `json:"species"`
+	Societies   []SocietyStub  `json:"societies"`
+	Campaigns   []CampaignStub `json:"campaigns"`
 }
 
 type WorldStub struct {
@@ -47,13 +48,14 @@ func SerializeWorld(world models.World) SerializedWorld {
 	}
 
 	return SerializedWorld{
-		Name:      world.Name,
-		Slug:      world.Slug,
-		Public:    world.Public,
-		Creators:  creators,
-		Species:   serializedSpecies,
-		Societies: serializedSocieties,
-		Campaigns: serializedCampaigns,
+		Name:        world.Name,
+		Slug:        world.Slug,
+		Description: world.Description,
+		Public:      world.Public,
+		Creators:    creators,
+		Species:     serializedSpecies,
+		Societies:   serializedSocieties,
+		Campaigns:   serializedCampaigns,
 	}
 }
 
