@@ -69,6 +69,7 @@ func WorldUpdate(c *gin.Context) {
 	newWorld := parsers.BodyToWorld(c)
 	world.Name = newWorld.Name
 	world.Slug = newWorld.Slug
+	world.Description = newWorld.Description
 	world.Public = newWorld.Public
 	world.Creators = newWorld.Creators
 
