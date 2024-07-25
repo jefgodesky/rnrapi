@@ -1,10 +1,16 @@
 package serializers
 
 import (
-	"encoding/json"
 	"github.com/jefgodesky/rnrapi/enums"
 	"github.com/jefgodesky/rnrapi/models"
 )
+
+type SerializedStage struct {
+	Name       string `json:"name"`
+	Procedures string `json:"procedures"`
+	MinAge     *uint  `json:"min"`
+	MaxAge     *uint  `json:"max"`
+}
 
 type SerializedSpecies struct {
 	Name        string            `json:"name"`
@@ -12,7 +18,7 @@ type SerializedSpecies struct {
 	Description string            `json:"description"`
 	Affinities  enums.AbilityPair `json:"affinities"`
 	Aversion    enums.Ability     `json:"aversion"`
-	Stages      json.RawMessage   `json:"stages"`
+	Stages      []SerializedStage `json:"stages"`
 	Public      bool              `json:"public"`
 	World       WorldStub         `json:"world"`
 }
@@ -22,15 +28,29 @@ type SpeciesStub struct {
 	Path string `json:"path"`
 }
 
+func SerializeStage(stage models.Stage) SerializedStage {
+	return SerializedStage{
+		Name:       stage.Name,
+		Procedures: stage.Procedures,
+		MinAge:     stage.MinAge,
+		MaxAge:     stage.MaxAge,
+	}
+}
+
 func SerializeSpecies(species models.Species) SerializedSpecies {
 	world := StubWorld(species.World)
+	serializedStages := make([]SerializedStage, len(species.Stages))
+	for i, stage := range species.Stages {
+		serializedStages[i] = SerializeStage(stage)
+	}
+
 	return SerializedSpecies{
 		Name:        species.Name,
 		Slug:        species.Slug,
 		Description: species.Description,
 		Affinities:  species.Affinities,
 		Aversion:    species.Aversion,
-		Stages:      species.Stages,
+		Stages:      serializedStages,
 		Public:      species.Public,
 		World:       world,
 	}

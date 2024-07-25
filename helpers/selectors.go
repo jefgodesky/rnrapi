@@ -14,7 +14,7 @@ import (
 var PreloadPaths = map[string][]string{
 	"World":    {"Creators"},
 	"Campaign": {"GMs", "PCs", "World", "World.Creators"},
-	"Species":  {"World", "World.Creators"},
+	"Species":  {"Stages", "World", "World.Creators"},
 	"Society":  {"World", "World.Creators"},
 	"Table":    {"Rows", "Author"},
 }

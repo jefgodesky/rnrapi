@@ -1,7 +1,7 @@
 package parsers
 
 import (
-	"encoding/json"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gosimple/slug"
 	"github.com/jefgodesky/rnrapi/enums"
@@ -16,7 +16,7 @@ func BodyToSpecies(c *gin.Context) *models.Species {
 		Description string           `json:"description"`
 		Affinities  [2]enums.Ability `json:"affinities"`
 		Aversion    enums.Ability    `json:"aversion"`
-		Stages      json.RawMessage  `json:"stages"`
+		Stages      []models.Stage   `json:"stages"`
 		Public      *bool            `json:"public"`
 		World       string           `json:"world"`
 	}
@@ -26,6 +26,8 @@ func BodyToSpecies(c *gin.Context) *models.Species {
 		c.Abort()
 		return nil
 	}
+
+	fmt.Println(body)
 
 	speciesSlug := body.Slug
 	if speciesSlug == "" {

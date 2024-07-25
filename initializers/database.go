@@ -33,6 +33,7 @@ func MigrateDB() error {
 		&models.World{},
 		&models.Campaign{},
 		&models.Species{},
+		&models.Stage{},
 		&models.Society{},
 		&models.Character{},
 		&models.Scroll{},
