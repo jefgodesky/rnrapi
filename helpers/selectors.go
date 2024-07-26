@@ -15,6 +15,7 @@ var PreloadPaths = map[string][]string{
 	"World":    {"Creators"},
 	"Campaign": {"GMs", "PCs", "World", "World.Creators"},
 	"Species":  {"Stages", "World", "World.Creators"},
+	"Scale":    {"Levels", "Author"},
 	"Society":  {"World", "World.Creators"},
 	"Table":    {"Rows", "Author"},
 }
@@ -165,6 +166,14 @@ func GetTable(c *gin.Context, slug string) *models.Table {
 		return nil
 	}
 	return &table
+}
+
+func GetScale(c *gin.Context, slug string) *models.Scale {
+	var scale models.Scale
+	if !GetInstance(c, &scale, slug, map[string]interface{}{}) {
+		return nil
+	}
+	return &scale
 }
 
 func GetRoll(c *gin.Context, id string) *models.Roll {

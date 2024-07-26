@@ -137,6 +137,25 @@ func TableAuthorOnly(c *gin.Context) *models.Table {
 	return table
 }
 
+func ScaleAuthorOnly(c *gin.Context) *models.Scale {
+	scale := GetScaleFromSlug(c)
+	if scale == nil {
+		return nil
+	}
+
+	user := GetUserFromContext(c, true)
+	if user == nil {
+		return nil
+	}
+
+	if scale.AuthorID != user.ID {
+		c.JSON(403, gin.H{"error": "Forbidden"})
+		return nil
+	}
+
+	return scale
+}
+
 func filterWorldAccess(items interface{}, user *models.User) interface{} {
 	itemsVal := reflect.ValueOf(items)
 	if itemsVal.Kind() != reflect.Slice {

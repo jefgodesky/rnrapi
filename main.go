@@ -107,6 +107,10 @@ func main() {
 			authRequired.GET("/rolls/:id", controllers.RollRetrieve)
 			authRequired.HEAD("/rolls/:id", controllers.RollRetrieve)
 			authRequired.DELETE("/rolls/:id", controllers.RollDestroy)
+
+			authRequired.POST("/scales", controllers.ScaleCreate)
+			authRequired.PUT("/scales/:slug", controllers.ScaleUpdate)
+			authRequired.DELETE("/scales/:slug", controllers.ScaleDestroy)
 		}
 
 		authOptional := v.Group("/")
@@ -146,6 +150,11 @@ func main() {
 			authOptional.HEAD("/tables", controllers.TableIndex)
 			authOptional.GET("/tables/:slug", controllers.TableRetrieve)
 			authOptional.HEAD("/tables/:slug", controllers.TableRetrieve)
+
+			authOptional.GET("/scales", controllers.ScaleIndex)
+			authOptional.HEAD("/scales", controllers.ScaleIndex)
+			authOptional.GET("/scales/:slug", controllers.ScaleRetrieve)
+			authOptional.HEAD("/scales/:slug", controllers.ScaleRetrieve)
 
 			authOptional.POST("/rolls", controllers.RollCreate)
 		}

@@ -16,6 +16,8 @@ var AllowedMethods = map[string]string{
 	"/v1/password-reset":          "POST",
 	"/v1/rolls":                   "GET, HEAD",
 	"/v1/rolls/:id":               "GET, HEAD, DELETE",
+	"/v1/scales":                  "GET, HEAD, POST",
+	"/v1/scales/:slig":            "GET, HEAD, PUT, DELETE",
 	"/v1/scrolls":                 "GET, HEAD",
 	"/v1/scrolls/:id":             "GET, HEAD, PUT, DELETE",
 	"/v1/societies":               "GET, HEAD",

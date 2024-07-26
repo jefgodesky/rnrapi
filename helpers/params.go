@@ -38,6 +38,11 @@ func GetCharacterFromID(c *gin.Context) *models.Character {
 	return GetCharacter(c, id)
 }
 
+func GetScaleFromSlug(c *gin.Context) *models.Scale {
+	slug := c.Param("slug")
+	return GetScale(c, slug)
+}
+
 func GetScrollFromID(c *gin.Context) *models.Scroll {
 	id := c.Param("id")
 	return GetScroll(c, id)

@@ -40,6 +40,8 @@ func MigrateDB() error {
 		&models.Table{},
 		&models.TableRow{},
 		&models.Roll{},
+		&models.Scale{},
+		&models.Level{},
 	)
 
 	if err != nil {
