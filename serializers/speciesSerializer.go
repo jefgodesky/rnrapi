@@ -24,8 +24,10 @@ type SerializedSpecies struct {
 }
 
 type SpeciesStub struct {
-	Name string `json:"name"`
-	Path string `json:"path"`
+	Name        string    `json:"name"`
+	Path        string    `json:"path"`
+	Description string    `json:"description"`
+	World       WorldStub `json:"world"`
 }
 
 func SerializeStage(stage models.Stage) SerializedStage {
@@ -58,8 +60,10 @@ func SerializeSpecies(species models.Species) SerializedSpecies {
 
 func StubSpeciesWithWorld(species models.Species, world string) SpeciesStub {
 	return SpeciesStub{
-		Name: species.Name,
-		Path: "/species/" + world + "/" + species.Slug,
+		Name:        species.Name,
+		Path:        "/species/" + world + "/" + species.Slug,
+		Description: species.Description,
+		World:       StubWorld(species.World),
 	}
 }
 
