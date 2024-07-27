@@ -87,6 +87,11 @@ func SpeciesUpdate(c *gin.Context) {
 	species.WorldID = newSpecies.WorldID
 	species.World = newSpecies.World
 
+	if err := initializers.DB.Where("species_id = ?", species.ID).Delete(&models.Stage{}).Error; err != nil {
+		c.JSON(500, gin.H{"error": "Failed to update species"})
+		return
+	}
+
 	if err := initializers.DB.Save(species).Error; err != nil {
 		c.JSON(500, gin.H{"Error": "Failed to update species"})
 		return
