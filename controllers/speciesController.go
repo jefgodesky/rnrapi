@@ -30,23 +30,25 @@ func SpeciesCreate(c *gin.Context) {
 func SpeciesIndex(c *gin.Context) {
 	var species []models.Species
 	user := helpers.GetUserFromContext(c, false)
+	worldSlug := c.Query("world")
 	query := initializers.DB.
 		Model(&models.Species{}).
-		Preload(clause.Associations)
+		Preload(clause.Associations).
+		Joins("JOIN worlds ON worlds.id = species.world_id")
+
+	if worldSlug != "" {
+		query = query.Where("worlds.slug = ?", worldSlug)
+	}
 
 	if user != nil {
-		query.Joins("JOIN worlds ON worlds.id = species.world_id").
-			Where("(species.public = ? AND worlds.public = ?) OR species.world_id IN (SELECT world_id FROM world_creators WHERE user_id = ?)", true, true, user.ID)
+		query = query.Where("(species.public = ? AND worlds.public = ?) OR species.world_id IN (SELECT world_id FROM world_creators WHERE user_id = ?)", true, true, user.ID)
 	} else {
-		query.Joins("JOIN worlds ON worlds.id = species.world_id").
-			Where("species.public = ? AND worlds.public = ?", true, true)
-
+		query = query.Where("species.public = ? AND worlds.public = ?", true, true)
 	}
 
 	var total int64
 	query.Count(&total)
 	query.Scopes(helpers.Paginate(c)).Find(&species)
-
 	c.JSON(200, gin.H{
 		"total":     total,
 		"page":      c.GetInt("page"),
