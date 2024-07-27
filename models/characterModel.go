@@ -5,8 +5,6 @@ import (
 	"strings"
 )
 
-const CharacterNoteSeparator = "[ ~~~ CHARACTER NOTE SEPARATOR ~~~]"
-
 type Character struct {
 	ID string `gorm:"primaryKey" json:"id"`
 	gorm.Model

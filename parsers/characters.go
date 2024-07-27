@@ -5,7 +5,6 @@ import (
 	"github.com/jefgodesky/rnrapi/helpers"
 	"github.com/jefgodesky/rnrapi/initializers"
 	"github.com/jefgodesky/rnrapi/models"
-	"strings"
 )
 
 func IdsToCharacters(ids []string) []models.Character {
@@ -34,7 +33,7 @@ func BodyToCharacter(c *gin.Context) *models.Character {
 		Name        string        `json:"name"`
 		Description string        `json:"description"`
 		Abilities   AbilitiesBody `json:"abilities"`
-		Notes       []string      `json:"notes"`
+		Notes       string        `json:"notes"`
 		Public      *bool         `json:"public"`
 		PC          bool          `json:"pc"`
 		Player      string        `json:"player"`
@@ -65,7 +64,7 @@ func BodyToCharacter(c *gin.Context) *models.Character {
 		Int:         body.Abilities.Intelligence,
 		Wis:         body.Abilities.Wisdom,
 		Cha:         body.Abilities.Charisma,
-		Notes:       strings.Join(body.Notes, models.CharacterNoteSeparator),
+		Notes:       body.Notes,
 		PC:          body.PC,
 		Public:      isPublic,
 		PlayerID:    player.ID,
