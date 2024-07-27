@@ -31,12 +31,15 @@ type SerializedCharacter struct {
 	PC          bool                  `json:"pc"`
 	Campaigns   []CampaignStub        `json:"campaigns"`
 	Public      bool                  `json:"public"`
-	Player      string                `json:"player"`
+	Player      UserStub              `json:"player"`
 }
 
 type CharacterStub struct {
-	Name string `json:"name"`
-	Path string `json:"path"`
+	ID          string   `json:"id"`
+	Name        string   `json:"name"`
+	Path        string   `json:"path"`
+	Player      UserStub `json:"player"`
+	Description string   `json:"description"`
 }
 
 func SerializeCharacter(char models.Character) SerializedCharacter {
@@ -79,14 +82,17 @@ func SerializeCharacter(char models.Character) SerializedCharacter {
 		PC:          char.PC,
 		Campaigns:   campaignStubs,
 		Public:      char.Public,
-		Player:      char.Player.Username,
+		Player:      StubUser(char.Player),
 	}
 }
 
 func StubCharacter(char models.Character) CharacterStub {
 	return CharacterStub{
-		Name: char.Name,
-		Path: "/characters/" + char.ID,
+		ID:          char.ID,
+		Name:        char.Name,
+		Path:        "/characters/" + char.ID,
+		Player:      StubUser(char.Player),
+		Description: char.Description,
 	}
 }
 
