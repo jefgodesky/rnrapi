@@ -16,8 +16,10 @@ type SerializedSociety struct {
 }
 
 type SocietyStub struct {
-	Name string `json:"name"`
-	Path string `json:"path"`
+	Name        string    `json:"name"`
+	Path        string    `json:"path"`
+	Description string    `json:"description"`
+	World       WorldStub `json:"world"`
 }
 
 func SerializeSociety(society models.Society) SerializedSociety {
@@ -35,8 +37,10 @@ func SerializeSociety(society models.Society) SerializedSociety {
 
 func StubSocietyWithWorld(society models.Society, world string) SocietyStub {
 	return SocietyStub{
-		Name: society.Name,
-		Path: "/societies/" + world + "/" + society.Slug,
+		Name:        society.Name,
+		Path:        "/societies/" + world + "/" + society.Slug,
+		Description: society.Description,
+		World:       StubWorld(society.World),
 	}
 }
 
