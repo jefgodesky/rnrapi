@@ -27,16 +27,20 @@ func SocietyCreate(c *gin.Context) {
 func SocietyIndex(c *gin.Context) {
 	var societies []models.Society
 	user := helpers.GetUserFromContext(c, false)
+	worldSlug := c.Query("world")
 	query := initializers.DB.
 		Model(&models.Society{}).
-		Preload(clause.Associations)
+		Preload(clause.Associations).
+		Joins("JOIN worlds ON worlds.id = societies.world_id")
+
+	if worldSlug != "" {
+		query = query.Where("worlds.slug = ?", worldSlug)
+	}
 
 	if user != nil {
-		query.Joins("JOIN worlds ON worlds.id = societies.world_id").
-			Where("(societies.public = ? AND worlds.public = ?) OR societies.world_id IN (SELECT world_id FROM world_creators WHERE user_id = ?)", true, true, user.ID)
+		query = query.Where("(societies.public = ? AND worlds.public = ?) OR societies.world_id IN (SELECT world_id FROM world_creators WHERE user_id = ?)", true, true, user.ID)
 	} else {
-		query.Joins("JOIN worlds ON worlds.id = societies.world_id").
-			Where("societies.public = ? AND worlds.public = ?", true, true)
+		query = query.Where("societies.public = ? AND worlds.public = ?", true, true)
 	}
 
 	var total int64
