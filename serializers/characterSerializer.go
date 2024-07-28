@@ -17,7 +17,7 @@ type SerializedAbilities struct {
 
 type SerializedResistances struct {
 	Fort int `json:"fortitude"`
-	Ref  int `json:"reflexes"`
+	Ref  int `json:"reflex"`
 	Will int `json:"will"`
 }
 
