@@ -7,11 +7,12 @@ import (
 )
 
 type SerializedUser struct {
-	Username   string          `json:"username"`
-	Name       string          `json:"name"`
-	Bio        string          `json:"bio"`
-	Characters []CharacterStub `json:"characters"`
-	Active     bool            `json:"active"`
+	Username   string               `json:"username"`
+	Name       string               `json:"name"`
+	Bio        string               `json:"bio"`
+	Characters []CharacterStub      `json:"characters"`
+	Campaigns  []SerializedCampaign `json:"campaigns"`
+	Active     bool                 `json:"active"`
 }
 
 type UserStub struct {
@@ -32,11 +33,40 @@ func SerializeUser(user models.User) SerializedUser {
 		characters[i] = StubCharacter(pc)
 	}
 
+	var running []models.Campaign
+	initializers.DB.
+		Joins("JOIN campaign_gms ON campaign_gms.campaign_id = campaigns.id").
+		Where("campaign_gms.user_id = ?", user.ID).
+		Preload(clause.Associations).
+		Find(&running)
+
+	var playing []models.Campaign
+	initializers.DB.
+		Joins("JOIN campaign_pcs ON campaign_pcs.campaign_id = campaigns.id").
+		Where("campaign_pcs.character_id IN (?)", initializers.DB.Select("id").Where("player_id = ?", user.ID).Table("characters")).
+		Preload(clause.Associations).
+		Find(&playing)
+
+	campaignMap := make(map[uint]models.Campaign)
+	for _, campaign := range running {
+		campaignMap[campaign.ID] = campaign
+	}
+
+	for _, campaign := range playing {
+		campaignMap[campaign.ID] = campaign
+	}
+
+	campaigns := make([]SerializedCampaign, 0, len(campaignMap))
+	for _, campaign := range campaignMap {
+		campaigns = append(campaigns, SerializeCampaign(campaign))
+	}
+
 	return SerializedUser{
 		Username:   user.Username,
 		Name:       user.Name,
 		Bio:        user.Bio,
 		Characters: characters,
+		Campaigns:  campaigns,
 		Active:     user.Active,
 	}
 }
@@ -55,12 +85,4 @@ func SerializeUsers(users []models.User) []UserStub {
 		stubs = append(stubs, StubUser(user))
 	}
 	return stubs
-}
-
-func UsersToUsernames(users []models.User) []string {
-	var usernames = make([]string, len(users))
-	for i, user := range users {
-		usernames[i] = user.Username
-	}
-	return usernames
 }
