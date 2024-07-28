@@ -95,8 +95,8 @@ func main() {
 			authRequired.POST("/scrolls", controllers.ScrollCreate)
 			authRequired.PUT("/scrolls/:id", controllers.ScrollUpdate)
 			authRequired.DELETE("/scrolls/:id", controllers.ScrollDestroy)
-			authRequired.POST("/scrolls/:id/seal", controllers.ScrollSeal)
-			authRequired.DELETE("/scrolls/:id/seal", controllers.ScrollUnseal)
+			authRequired.POST("/scrolls/:id/seals", controllers.ScrollSeal)
+			authRequired.DELETE("/scrolls/:id/seals", controllers.ScrollUnseal)
 
 			authRequired.POST("/tables", controllers.TableCreate)
 			authRequired.PUT("/tables/:slug", controllers.TableUpdate)

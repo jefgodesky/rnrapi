@@ -20,6 +20,7 @@ var AllowedMethods = map[string]string{
 	"/v1/scales/:slig":            "GET, HEAD, PUT, DELETE",
 	"/v1/scrolls":                 "GET, HEAD",
 	"/v1/scrolls/:id":             "GET, HEAD, PUT, DELETE",
+	"/v1/scrolls/:id/seals":       "POST, DELETE",
 	"/v1/societies":               "GET, HEAD",
 	"/v1/societies/:world/:slug":  "GET, HEAD, PUT, DELETE",
 	"/v1/species":                 "GET, HEAD",
