@@ -9,15 +9,10 @@ type SerializedScroll struct {
 	Name        string              `json:"name"`
 	Description string              `json:"description"`
 	Seals       uint                `json:"seals"`
-	Writers     []string            `json:"writers"`
-	Readers     []string            `json:"readers"`
+	Writers     []UserStub          `json:"writers"`
+	Readers     []UserStub          `json:"readers"`
 	Public      bool                `json:"public"`
 	Campaign    *SerializedCampaign `json:"campaign,omitempty"`
-}
-
-type ScrollStub struct {
-	Name string `json:"name"`
-	Path string `json:"path"`
 }
 
 func SerializeScroll(scroll models.Scroll) SerializedScroll {
@@ -26,8 +21,8 @@ func SerializeScroll(scroll models.Scroll) SerializedScroll {
 		Name:        scroll.Name,
 		Description: scroll.Description,
 		Seals:       scroll.Seals,
-		Writers:     UsersToUsernames(scroll.Writers),
-		Readers:     UsersToUsernames(scroll.Readers),
+		Writers:     SerializeUsers(scroll.Writers),
+		Readers:     SerializeUsers(scroll.Readers),
 		Public:      scroll.Public,
 	}
 
@@ -39,17 +34,10 @@ func SerializeScroll(scroll models.Scroll) SerializedScroll {
 	return serialized
 }
 
-func StubScroll(scroll models.Scroll) ScrollStub {
-	return ScrollStub{
-		Name: scroll.Name,
-		Path: "/scrolls/" + scroll.ID,
-	}
-}
-
-func SerializeScrolls(scrolls []models.Scroll) []ScrollStub {
-	stubs := make([]ScrollStub, 0)
+func SerializeScrolls(scrolls []models.Scroll) []SerializedScroll {
+	stubs := make([]SerializedScroll, 0)
 	for _, scroll := range scrolls {
-		stubs = append(stubs, StubScroll(scroll))
+		stubs = append(stubs, SerializeScroll(scroll))
 	}
 	return stubs
 }

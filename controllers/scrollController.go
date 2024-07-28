@@ -8,6 +8,7 @@ import (
 	"github.com/jefgodesky/rnrapi/models"
 	"github.com/jefgodesky/rnrapi/parsers"
 	"github.com/jefgodesky/rnrapi/serializers"
+	"gorm.io/gorm/clause"
 )
 
 func ScrollCreate(c *gin.Context) {
@@ -24,7 +25,9 @@ func ScrollCreate(c *gin.Context) {
 func ScrollIndex(c *gin.Context) {
 	var scrolls []models.Scroll
 	user := helpers.GetUserFromContext(c, false)
-	query := initializers.DB.Model(&models.Scroll{})
+	query := initializers.DB.
+		Model(&models.Scroll{}).
+		Preload(clause.Associations)
 
 	if user != nil {
 		query.Joins("LEFT JOIN scroll_readers ON scroll_readers.scroll_id = scrolls.id").
