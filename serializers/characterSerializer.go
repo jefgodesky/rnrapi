@@ -29,7 +29,7 @@ type SerializedCharacter struct {
 	Resistances SerializedResistances `json:"resistances"`
 	Notes       string                `json:"notes"`
 	PC          bool                  `json:"pc"`
-	Campaigns   []CampaignStub        `json:"campaigns"`
+	Campaigns   []SerializedCampaign  `json:"campaigns"`
 	Public      bool                  `json:"public"`
 	Player      UserStub              `json:"player"`
 }
@@ -67,9 +67,9 @@ func SerializeCharacter(char models.Character) SerializedCharacter {
 		panic("Could not find character campaigns")
 	}
 
-	var campaignStubs []CampaignStub
+	var campaignStubs []SerializedCampaign
 	for _, campaign := range campaigns {
-		campaignStubs = append(campaignStubs, StubCampaign(campaign))
+		campaignStubs = append(campaignStubs, SerializeCampaign(campaign))
 	}
 
 	return SerializedCharacter{

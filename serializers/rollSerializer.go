@@ -7,17 +7,17 @@ import (
 )
 
 type SerializedRoll struct {
-	ID        string         `json:"id"`
-	Note      *string        `json:"note,omitempty"`
-	Time      time.Time      `json:"time"`
-	Table     TableStub      `json:"table"`
-	Roller    *UserStub      `json:"roller,omitempty"`
-	Character *CharacterStub `json:"character,omitempty"`
-	Ability   *string        `json:"ability,omitempty"`
-	Campaign  *CampaignStub  `json:"campaign,omitempty"`
-	Modifier  int            `json:"modifier"`
-	Log       []string       `json:"log"`
-	Result    []string       `json:"results"`
+	ID        string              `json:"id"`
+	Note      *string             `json:"note,omitempty"`
+	Time      time.Time           `json:"time"`
+	Table     TableStub           `json:"table"`
+	Roller    *UserStub           `json:"roller,omitempty"`
+	Character *CharacterStub      `json:"character,omitempty"`
+	Ability   *string             `json:"ability,omitempty"`
+	Campaign  *SerializedCampaign `json:"campaign,omitempty"`
+	Modifier  int                 `json:"modifier"`
+	Log       []string            `json:"log"`
+	Result    []string            `json:"results"`
 }
 
 func SerializeRoll(roll models.Roll) SerializedRoll {
@@ -49,7 +49,7 @@ func SerializeRoll(roll models.Roll) SerializedRoll {
 	}
 
 	if roll.Campaign != nil {
-		ptr := StubCampaign(*roll.Campaign)
+		ptr := SerializeCampaign(*roll.Campaign)
 		serialized.Campaign = &ptr
 	}
 

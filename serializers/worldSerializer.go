@@ -6,14 +6,14 @@ import (
 )
 
 type SerializedWorld struct {
-	Name        string         `json:"name"`
-	Slug        string         `json:"slug"`
-	Description string         `json:"description"`
-	Public      bool           `json:"public"`
-	Creators    []UserStub     `json:"creators"`
-	Species     []SpeciesStub  `json:"species"`
-	Societies   []SocietyStub  `json:"societies"`
-	Campaigns   []CampaignStub `json:"campaigns"`
+	Name        string               `json:"name"`
+	Slug        string               `json:"slug"`
+	Description string               `json:"description"`
+	Public      bool                 `json:"public"`
+	Creators    []UserStub           `json:"creators"`
+	Species     []SpeciesStub        `json:"species"`
+	Societies   []SocietyStub        `json:"societies"`
+	Campaigns   []SerializedCampaign `json:"campaigns"`
 }
 
 type WorldStub struct {
@@ -32,9 +32,9 @@ func SerializeWorld(world models.World) SerializedWorld {
 		creators[i] = StubUser(creator)
 	}
 
-	serializedCampaigns := make([]CampaignStub, len(campaigns))
+	serializedCampaigns := make([]SerializedCampaign, len(campaigns))
 	for i, campaign := range campaigns {
-		serializedCampaigns[i] = StubCampaignWithWorld(campaign, world.Slug)
+		serializedCampaigns[i] = SerializeCampaign(campaign)
 	}
 
 	var species []models.Species
