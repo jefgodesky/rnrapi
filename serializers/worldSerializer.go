@@ -6,14 +6,14 @@ import (
 )
 
 type SerializedWorld struct {
-	Name        string               `json:"name"`
-	Slug        string               `json:"slug"`
-	Description string               `json:"description"`
-	Public      bool                 `json:"public"`
-	Creators    []UserStub           `json:"creators"`
-	Species     []SpeciesStub        `json:"species"`
-	Societies   []SocietyStub        `json:"societies"`
-	Campaigns   []SerializedCampaign `json:"campaigns"`
+	Name        string                        `json:"name"`
+	Slug        string                        `json:"slug"`
+	Description string                        `json:"description"`
+	Public      bool                          `json:"public"`
+	Creators    []UserStub                    `json:"creators"`
+	Species     []SpeciesStubSansWorld        `json:"species"`
+	Societies   []SocietyStubSansWorld        `json:"societies"`
+	Campaigns   []SerializedCampaignSansWorld `json:"campaigns"`
 }
 
 type WorldStub struct {
@@ -25,32 +25,35 @@ type WorldStub struct {
 
 func SerializeWorld(world models.World) SerializedWorld {
 	var campaigns []models.Campaign
-	initializers.DB.Where("world_id = ?", world.ID).Preload("GMs").Find(&campaigns)
+	initializers.DB.Where("world_id = ?", world.ID).
+		Preload("GMs").
+		Preload("PCs").
+		Find(&campaigns)
 
 	creators := make([]UserStub, len(world.Creators))
 	for i, creator := range world.Creators {
 		creators[i] = StubUser(creator)
 	}
 
-	serializedCampaigns := make([]SerializedCampaign, len(campaigns))
+	serializedCampaigns := make([]SerializedCampaignSansWorld, len(campaigns))
 	for i, campaign := range campaigns {
-		serializedCampaigns[i] = SerializeCampaign(campaign)
+		serializedCampaigns[i] = SerializeCampaignSansWorld(campaign)
 	}
 
 	var species []models.Species
 	initializers.DB.Where("world_id = ?", world.ID).Find(&species)
 
-	serializedSpecies := make([]SpeciesStub, len(species))
+	serializedSpecies := make([]SpeciesStubSansWorld, len(species))
 	for i, sp := range species {
-		serializedSpecies[i] = StubSpeciesWithWorld(sp, world.Slug)
+		serializedSpecies[i] = StubSpeciesSansWorld(sp)
 	}
 
 	var societies []models.Society
 	initializers.DB.Where("world_id = ?", world.ID).Find(&societies)
 
-	serializedSocieties := make([]SocietyStub, len(societies))
+	serializedSocieties := make([]SocietyStubSansWorld, len(societies))
 	for i, society := range societies {
-		serializedSocieties[i] = StubSocietyWithWorld(society, world.Slug)
+		serializedSocieties[i] = StubSocietySansWorld(society)
 	}
 
 	return SerializedWorld{

@@ -22,6 +22,12 @@ type SocietyStub struct {
 	World       WorldStub `json:"world"`
 }
 
+type SocietyStubSansWorld struct {
+	Name        string `json:"name"`
+	Slug        string `json:"slug"`
+	Description string `json:"description"`
+}
+
 func SerializeSociety(society models.Society) SerializedSociety {
 	world := StubWorld(society.World)
 	return SerializedSociety{
@@ -46,6 +52,14 @@ func StubSocietyWithWorld(society models.Society, world string) SocietyStub {
 
 func StubSociety(society models.Society) SocietyStub {
 	return StubSocietyWithWorld(society, society.World.Slug)
+}
+
+func StubSocietySansWorld(society models.Society) SocietyStubSansWorld {
+	return SocietyStubSansWorld{
+		Name:        society.Name,
+		Slug:        society.Slug,
+		Description: society.Description,
+	}
 }
 
 func SerializeSocieties(societies []models.Society) []SocietyStub {

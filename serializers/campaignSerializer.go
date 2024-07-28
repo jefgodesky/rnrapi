@@ -14,7 +14,16 @@ type SerializedCampaign struct {
 	World       WorldStub       `json:"world"`
 }
 
-func SerializeCampaign(campaign models.Campaign) SerializedCampaign {
+type SerializedCampaignSansWorld struct {
+	Name        string          `json:"name"`
+	Slug        string          `json:"slug"`
+	Description string          `json:"description"`
+	GMs         []UserStub      `json:"gms"`
+	PCs         []CharacterStub `json:"pcs"`
+	Public      bool            `json:"public"`
+}
+
+func SerializeCampaignSansWorld(campaign models.Campaign) SerializedCampaignSansWorld {
 	var gms []UserStub
 	for _, gm := range campaign.GMs {
 		gms = append(gms, StubUser(gm))
@@ -25,15 +34,26 @@ func SerializeCampaign(campaign models.Campaign) SerializedCampaign {
 		pcs = append(pcs, StubCharacter(pc))
 	}
 
-	world := StubWorld(campaign.World)
-
-	return SerializedCampaign{
+	return SerializedCampaignSansWorld{
 		Name:        campaign.Name,
 		Slug:        campaign.Slug,
 		Description: campaign.Description,
 		GMs:         gms,
 		PCs:         pcs,
 		Public:      campaign.Public,
+	}
+}
+
+func SerializeCampaign(campaign models.Campaign) SerializedCampaign {
+	sans := SerializeCampaignSansWorld(campaign)
+	world := StubWorld(campaign.World)
+	return SerializedCampaign{
+		Name:        sans.Name,
+		Slug:        sans.Slug,
+		Description: sans.Description,
+		GMs:         sans.GMs,
+		PCs:         sans.PCs,
+		Public:      sans.Public,
 		World:       world,
 	}
 }
