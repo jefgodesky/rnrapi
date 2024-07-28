@@ -8,6 +8,7 @@ import (
 	"github.com/jefgodesky/rnrapi/models"
 	"github.com/jefgodesky/rnrapi/parsers"
 	"github.com/jefgodesky/rnrapi/serializers"
+	"gorm.io/gorm/clause"
 	"strings"
 )
 
@@ -44,7 +45,9 @@ func UserCreate(c *gin.Context) {
 
 func UserIndex(c *gin.Context) {
 	var users []models.User
-	query := initializers.DB.Model(&models.User{}).Where("active = ?", true)
+	query := initializers.DB.Model(&models.User{}).
+		Where("active = ?", true).
+		Preload(clause.Associations)
 
 	q := c.Query("q")
 	if q != "" {

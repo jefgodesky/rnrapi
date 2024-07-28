@@ -106,7 +106,10 @@ func GetSociety(c *gin.Context, world string, slug string) *models.Society {
 
 func GetUser(c *gin.Context, username string, required bool) *models.User {
 	var user models.User
-	result := initializers.DB.Where("username = ?", username).First(&user)
+	result := initializers.DB.
+		Where("username = ?", username).
+		Preload(clause.Associations).
+		First(&user)
 
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {

@@ -3,6 +3,7 @@ package serializers
 import (
 	"github.com/jefgodesky/rnrapi/initializers"
 	"github.com/jefgodesky/rnrapi/models"
+	"gorm.io/gorm/clause"
 )
 
 type SerializedUser struct {
@@ -21,7 +22,10 @@ type UserStub struct {
 
 func SerializeUser(user models.User) SerializedUser {
 	var pcs []models.Character
-	initializers.DB.Where("player_id = ? AND pc = ? AND public = ?", user.ID, true, true).Find(&pcs)
+	initializers.DB.
+		Where("player_id = ? AND pc = ? AND public = ?", user.ID, true, true).
+		Preload(clause.Associations).
+		Find(&pcs)
 
 	characters := make([]CharacterStub, len(pcs))
 	for i, pc := range pcs {
