@@ -74,6 +74,11 @@ func ScaleUpdate(c *gin.Context) {
 	scale.AuthorID = newScale.AuthorID
 	scale.Author = newScale.Author
 
+	if err := initializers.DB.Where("scale_id = ?", scale.ID).Delete(&models.Level{}).Error; err != nil {
+		c.JSON(500, gin.H{"error": "Failed to update scale"})
+		return
+	}
+
 	if err := initializers.DB.Save(scale).Error; err != nil {
 		c.JSON(500, gin.H{"Error": "Failed to update scale"})
 		return
