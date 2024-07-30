@@ -16,6 +16,7 @@ type SerializedScale struct {
 	Description string            `json:"description"`
 	Levels      []SerializedLevel `json:"levels"`
 	Author      UserStub          `json:"author"`
+	Public      bool              `json:"public"`
 }
 
 type ScaleStub struct {
@@ -23,6 +24,7 @@ type ScaleStub struct {
 	Path        string   `json:"path"`
 	Description string   `json:"description"`
 	Author      UserStub `json:"author"`
+	Public      bool     `json:"public"`
 }
 
 func SerializeLevel(level models.Level) SerializedLevel {
@@ -50,6 +52,7 @@ func SerializeScale(scale models.Scale) SerializedScale {
 		Description: scale.Description,
 		Levels:      levels,
 		Author:      StubUser(scale.Author),
+		Public:      scale.Public,
 	}
 }
 
@@ -59,6 +62,7 @@ func StubScale(scale models.Scale) ScaleStub {
 		Path:        "/scales/" + scale.Slug,
 		Description: scale.Description,
 		Author:      StubUser(scale.Author),
+		Public:      scale.Public,
 	}
 }
 
