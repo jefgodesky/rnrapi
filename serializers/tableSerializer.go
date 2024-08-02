@@ -27,6 +27,7 @@ type SerializedTable struct {
 type TableStub struct {
 	Name        string   `json:"name"`
 	Path        string   `json:"path"`
+	Slug        string   `json:"slug"`
 	Description string   `json:"description"`
 	Author      UserStub `json:"author"`
 }
@@ -69,6 +70,7 @@ func StubTable(table models.Table) TableStub {
 	return TableStub{
 		Name:        table.Name,
 		Path:        "/tables/" + table.Slug,
+		Slug:        table.Slug,
 		Description: table.Description,
 		Author:      StubUser(table.Author),
 	}
