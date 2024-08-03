@@ -7,6 +7,7 @@ import (
 	"github.com/jefgodesky/rnrapi/models"
 	"github.com/jefgodesky/rnrapi/parsers"
 	"github.com/jefgodesky/rnrapi/serializers"
+	"gorm.io/gorm/clause"
 )
 
 func RollCreate(c *gin.Context) {
@@ -31,7 +32,8 @@ func RollIndex(c *gin.Context) {
 	query := initializers.DB.Model(&models.Roll{})
 	query.Joins("LEFT JOIN campaigns ON rolls.campaign_id = campaigns.id").
 		Joins("LEFT JOIN campaign_gms ON campaign_gms.campaign_id = campaigns.id").
-		Where("rolls.roller_id = ? OR campaign_gms.user_id = ?", user.ID, user.ID)
+		Where("rolls.roller_id = ? OR campaign_gms.user_id = ?", user.ID, user.ID).
+		Preload(clause.Associations)
 
 	var total int64
 	query.Count(&total)
