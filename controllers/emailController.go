@@ -16,23 +16,27 @@ func SendVerificationEmail(email models.Email) error {
 	to := email.Address
 	subject := "Please verify this address"
 
+	p := make([]string, 11)
+	p[0] = "The only thing we will ever use your email address for is to "
+	p[1] = "help you reset your password. If you lose your password or you "
+	p[2] = "can’t remember it, we can create a new one for you and send it "
+	p[3] = "to this email address. This works out great, so long as we can "
+	p[4] = "be sure that when we send that new password to this email "
+	p[5] = "address that we’re sending it to *you* and not some sinister "
+	p[6] = "villain, like a shapeshifting doppelgänger, or any other, less "
+	p[7] = "likely threat that may be lurking out there. That’s why we’d "
+	p[8] = "like you to click the link below. That will verify that this "
+	p[9] = "email reached you, so we know where to send your new password "
+	p[10] = "if you should ever need it."
+	paragraph := strings.Join(p, "")
+
 	initializers.DB.Where("id = ?", email.UserID).First(&email.User)
-	lines := make([]string, 15)
+	lines := make([]string, 5)
 	lines[0] = fmt.Sprintf("Hello %s,", email.User.Name)
 	lines[1] = ""
-	lines[2] = "The only thing we will ever use your email address for is to"
-	lines[3] = "help you reset your password. If you lose your password or you"
-	lines[4] = "can’t remember it, we can create a new one for you and send it"
-	lines[5] = "to this email address. This works out great, so long as we can"
-	lines[6] = "be sure that when we send that new password to this email"
-	lines[7] = "address that we’re sending it to *you* and not some sinister"
-	lines[8] = "villain, like a shapeshifting doppleganer, or any other, less"
-	lines[9] = "likely threat that may be lurking out there. That’s why we’d"
-	lines[10] = "like you to click the link below. That will verify that this"
-	lines[11] = "email reached you, so we know where to send your new password"
-	lines[12] = "if you should ever need it."
-	lines[13] = ""
-	lines[14] = fmt.Sprintf("https://ruinsandrevolutions.com/verify/%s-%d", email.Code, email.ID)
+	lines[2] = paragraph
+	lines[3] = ""
+	lines[4] = fmt.Sprintf("https://ruinsandrevolutions.com/verify/%s-%d", email.Code, email.ID)
 
 	return helpers.SendEmail(from, to, subject, strings.Join(lines, "\n"))
 }
